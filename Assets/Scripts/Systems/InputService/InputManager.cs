@@ -1,9 +1,10 @@
 using System;
+using Game.Player;
 using TowerDefence.Core;
 
-namespace Game.Player
+namespace Systems.InputService
 {
-    public class PlayerMovementService : IService, IInputManager
+    public class InputManager : IService, IInputManager
     {
         private IPlayerInputController m_CurrentPlayerInputController;
         private MovementSystemType m_CurrentMovementSystemType;
@@ -15,21 +16,24 @@ namespace Game.Player
 
         public IPlayerInputController GetCurrentPlayerInputController()
         {
-            if (m_CurrentPlayerInputController == null)
-                return m_CurrentPlayerInputController = GetMovementSystem(m_CurrentMovementSystemType);
-            return m_CurrentPlayerInputController;
+            return m_CurrentPlayerInputController ??= GetMovementSystem(m_CurrentMovementSystemType);
         }
-        
+
         private IPlayerInputController GetMovementSystem(MovementSystemType type)
         {
+            IPlayerInputController playerInputController;
+
             switch (type)
             {
                 case MovementSystemType.KeyboardLinear:
-                    return new InputLinearControl();
-
+                    playerInputController = new InputLinearControl();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
+
+            playerInputController.Subscribe();
+            return playerInputController;
         }
     }
 

@@ -195,6 +195,98 @@ public partial class @Input: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""KeysGameplay"",
+            ""id"": ""3bac79eb-b882-4dfa-bd45-4f02ffd01b46"",
+            ""actions"": [
+                {
+                    ""name"": ""Shoot"",
+                    ""type"": ""Button"",
+                    ""id"": ""d163b0bd-1fa7-4362-8c52-61a9046acb5c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Move"",
+                    ""type"": ""Value"",
+                    ""id"": ""a542ff04-c35f-474b-a359-b89b8185f881"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""a2608e79-90b2-4e42-ba16-6fd91eeeecb0"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""cbdeb87a-7fc0-4a77-a269-18d502102693"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""4d9dd962-f6c9-4a72-9ab5-dda6dfafb3f8"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""2ba26fa9-52b5-43a4-b0f8-9b2800589a39"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""2fb7adcd-8d70-4235-96e0-11fadb7fe4d0"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""6e6165c4-1843-444d-80ac-66729de745fe"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -206,11 +298,16 @@ public partial class @Input: IInputActionCollection2, IDisposable
         m_Game_TouchPhase = m_Game.FindAction("TouchPhase", throwIfNotFound: true);
         m_Game_Tap = m_Game.FindAction("Tap", throwIfNotFound: true);
         m_Game_Hold = m_Game.FindAction("Hold", throwIfNotFound: true);
+        // KeysGameplay
+        m_KeysGameplay = asset.FindActionMap("KeysGameplay", throwIfNotFound: true);
+        m_KeysGameplay_Shoot = m_KeysGameplay.FindAction("Shoot", throwIfNotFound: true);
+        m_KeysGameplay_Move = m_KeysGameplay.FindAction("Move", throwIfNotFound: true);
     }
 
     ~@Input()
     {
         UnityEngine.Debug.Assert(!m_Game.enabled, "This will cause a leak and performance issues, Input.Game.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_KeysGameplay.enabled, "This will cause a leak and performance issues, Input.KeysGameplay.Disable() has not been called.");
     }
 
     /// <summary>
@@ -422,6 +519,113 @@ public partial class @Input: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="GameActions" /> instance referencing this action map.
     /// </summary>
     public GameActions @Game => new GameActions(this);
+
+    // KeysGameplay
+    private readonly InputActionMap m_KeysGameplay;
+    private List<IKeysGameplayActions> m_KeysGameplayActionsCallbackInterfaces = new List<IKeysGameplayActions>();
+    private readonly InputAction m_KeysGameplay_Shoot;
+    private readonly InputAction m_KeysGameplay_Move;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "KeysGameplay".
+    /// </summary>
+    public struct KeysGameplayActions
+    {
+        private @Input m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public KeysGameplayActions(@Input wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "KeysGameplay/Shoot".
+        /// </summary>
+        public InputAction @Shoot => m_Wrapper.m_KeysGameplay_Shoot;
+        /// <summary>
+        /// Provides access to the underlying input action "KeysGameplay/Move".
+        /// </summary>
+        public InputAction @Move => m_Wrapper.m_KeysGameplay_Move;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_KeysGameplay; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="KeysGameplayActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(KeysGameplayActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="KeysGameplayActions" />
+        public void AddCallbacks(IKeysGameplayActions instance)
+        {
+            if (instance == null || m_Wrapper.m_KeysGameplayActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_KeysGameplayActionsCallbackInterfaces.Add(instance);
+            @Shoot.started += instance.OnShoot;
+            @Shoot.performed += instance.OnShoot;
+            @Shoot.canceled += instance.OnShoot;
+            @Move.started += instance.OnMove;
+            @Move.performed += instance.OnMove;
+            @Move.canceled += instance.OnMove;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="KeysGameplayActions" />
+        private void UnregisterCallbacks(IKeysGameplayActions instance)
+        {
+            @Shoot.started -= instance.OnShoot;
+            @Shoot.performed -= instance.OnShoot;
+            @Shoot.canceled -= instance.OnShoot;
+            @Move.started -= instance.OnMove;
+            @Move.performed -= instance.OnMove;
+            @Move.canceled -= instance.OnMove;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="KeysGameplayActions.UnregisterCallbacks(IKeysGameplayActions)" />.
+        /// </summary>
+        /// <seealso cref="KeysGameplayActions.UnregisterCallbacks(IKeysGameplayActions)" />
+        public void RemoveCallbacks(IKeysGameplayActions instance)
+        {
+            if (m_Wrapper.m_KeysGameplayActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="KeysGameplayActions.AddCallbacks(IKeysGameplayActions)" />
+        /// <seealso cref="KeysGameplayActions.RemoveCallbacks(IKeysGameplayActions)" />
+        /// <seealso cref="KeysGameplayActions.UnregisterCallbacks(IKeysGameplayActions)" />
+        public void SetCallbacks(IKeysGameplayActions instance)
+        {
+            foreach (var item in m_Wrapper.m_KeysGameplayActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_KeysGameplayActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="KeysGameplayActions" /> instance referencing this action map.
+    /// </summary>
+    public KeysGameplayActions @KeysGameplay => new KeysGameplayActions(this);
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Game" which allows adding and removing callbacks.
     /// </summary>
@@ -464,5 +668,27 @@ public partial class @Input: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnHold(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "KeysGameplay" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="KeysGameplayActions.AddCallbacks(IKeysGameplayActions)" />
+    /// <seealso cref="KeysGameplayActions.RemoveCallbacks(IKeysGameplayActions)" />
+    public interface IKeysGameplayActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Shoot" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnShoot(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Move" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMove(InputAction.CallbackContext context);
     }
 }

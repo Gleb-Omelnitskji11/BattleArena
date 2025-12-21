@@ -1,3 +1,4 @@
+using Systems.InputService;
 using TowerDefence.Core;
 using TowerDefence.Data;
 using TowerDefence.Systems;
@@ -13,7 +14,7 @@ namespace TowerDefence.Game
             services.RegisterLazy<IStateMachine, StateMachine>();
             services.RegisterLazy<ISceneLoader, SceneLoaderService>();
             services.RegisterLazy<IObjectPooler, ObjectPooler>();
-            services.RegisterLazy<IInputService, InputService>();
+            services.RegisterLazy<IInputManager, InputManager>();/// todo
             services.RegisterLazy<IConfigProvider, ConfigProvider>();
             services.RegisterLazy<IScreenRouter, ScreenRouter>();
             services.RegisterLazy<IUIRegistry, UIRegistry>();
