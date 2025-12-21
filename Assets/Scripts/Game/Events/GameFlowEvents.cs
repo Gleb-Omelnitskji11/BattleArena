@@ -34,5 +34,12 @@ namespace TowerDefence.Game
     public struct GameOverEvent
     {
     }
+
+    /// <summary>
+    /// Fired when player requests to start a new game
+    /// </summary>
+    public struct NewGameRequestedEvent
+    {
+    }
 }
 

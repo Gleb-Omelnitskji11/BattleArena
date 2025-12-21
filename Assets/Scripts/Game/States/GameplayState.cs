@@ -12,6 +12,8 @@ namespace TowerDefence.Game
         private IEventToken _resumeToken;
         private IEventToken _gameOverToken;
         private IEventToken _returnToMenuToken;
+        
+        private bool _isOver;
 
         public async void OnEnter()
         {
@@ -66,13 +68,21 @@ namespace TowerDefence.Game
 
         private async void OnResumeRequested(ResumeGameRequestedEvent evt)
         {
+            if (_isOver)
+            {
+                _eventBus.Publish(new NewGameRequestedEvent());
+            }
             Time.timeScale = 1f;
 
             var screenRouter = Services.Get<IScreenRouter>();
             await screenRouter.HideModalAsync();
         }
 
-        private async void OnGameOver(GameOverEvent evt){}
+        private async void OnGameOver(GameOverEvent evt)
+        {
+            _isOver = true;
+            _eventBus.Publish(new PauseGameRequestedEvent());
+        }
 
         private async void OnReturnToMenu(ReturnToMenuRequestedEvent evt)
         {
