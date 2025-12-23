@@ -19,6 +19,7 @@ namespace TowerDefence.Game
     /// </summary>
     public struct PauseGameRequestedEvent
     {
+        
     }
 
     /// <summary>
@@ -32,13 +33,6 @@ namespace TowerDefence.Game
     /// Fired when game is over (win or loss)
     /// </summary>
     public struct GameOverEvent
-    {
-    }
-
-    /// <summary>
-    /// Fired when player requests to start a new game
-    /// </summary>
-    public struct NewGameRequestedEvent
     {
     }
 }

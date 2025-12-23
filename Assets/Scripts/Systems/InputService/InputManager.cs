@@ -11,7 +11,7 @@ namespace Systems.InputService
 
         public void Init()
         {
-            m_CurrentMovementSystemType = MovementSystemType.KeyboardLinear; //Todo
+            m_CurrentMovementSystemType = MovementSystemType.Mobile; //Todo
         }
 
         public IPlayerInputController GetCurrentPlayerInputController()
@@ -28,6 +28,9 @@ namespace Systems.InputService
                 case MovementSystemType.KeyboardLinear:
                     playerInputController = new InputLinearControl();
                     break;
+                case MovementSystemType.Mobile:
+                    playerInputController = new InputMobileController();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
@@ -39,6 +42,7 @@ namespace Systems.InputService
 
     public enum MovementSystemType
     {
-        KeyboardLinear
+        KeyboardLinear,
+        Mobile
     }
 }

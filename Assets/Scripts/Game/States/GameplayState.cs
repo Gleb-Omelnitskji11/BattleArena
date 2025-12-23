@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using TowerDefence.Core;
 using TowerDefence.Systems;
 using TowerDefence.UI;
@@ -55,24 +56,19 @@ namespace TowerDefence.Game
         private async void OnPauseRequested(PauseGameRequestedEvent evt)
         {
             Time.timeScale = 0f;
-
-            var uiRegistry = Services.Get<IUIRegistry>();
-            if (!uiRegistry.TryGetScreen<IScreen>("Pause", out var pauseScreen))
-            {
-                return;
-            }
-
-            var screenRouter = Services.Get<IScreenRouter>();
-            await screenRouter.ShowModalAsync(pauseScreen);
+            await ShowPopup("Pause");
         }
 
         private async void OnResumeRequested(ResumeGameRequestedEvent evt)
         {
+            Time.timeScale = 1f;
+
             if (_isOver)
             {
-                _eventBus.Publish(new NewGameRequestedEvent());
+                var levelProgressChecker = Services.Get<LevelProgressChecker>();
+                levelProgressChecker.NextLevel();
+                _isOver = false;
             }
-            Time.timeScale = 1f;
 
             var screenRouter = Services.Get<IScreenRouter>();
             await screenRouter.HideModalAsync();
@@ -81,7 +77,21 @@ namespace TowerDefence.Game
         private async void OnGameOver(GameOverEvent evt)
         {
             _isOver = true;
-            _eventBus.Publish(new PauseGameRequestedEvent());
+            
+            Time.timeScale = 0f;
+            await ShowPopup("Pause");
+        }
+
+        private async Task ShowPopup(string id)
+        {
+            var uiRegistry = Services.Get<IUIRegistry>();
+            if (!uiRegistry.TryGetScreen<IScreen>("Pause", out var pauseScreen))
+            {
+                return;
+            }
+
+            var screenRouter = Services.Get<IScreenRouter>();
+            await screenRouter.ShowModalAsync(pauseScreen);
         }
 
         private async void OnReturnToMenu(ReturnToMenuRequestedEvent evt)

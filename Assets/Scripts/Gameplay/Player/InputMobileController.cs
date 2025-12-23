@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace Game.Player
 {
-    public class InputLinearControl : IPlayerInputController, IDisposable
+    public class InputMobileController : IPlayerInputController, IDisposable
     {
         private Input CustomInput;
 
@@ -25,22 +25,22 @@ namespace Game.Player
         {
             CustomInput = new Input();
 
-            CustomInput.KeysGameplay.Enable();
+            CustomInput.Game.Enable();
 
-            CustomInput.KeysGameplay.Move.performed += OnMove;
-            CustomInput.KeysGameplay.Move.canceled += OnMove;
-            CustomInput.KeysGameplay.Shoot.performed += OnShoot;
-            CustomInput.KeysGameplay.Shoot.canceled += OnShoot;
+            CustomInput.Game.TouchDelta.performed += OnMove;
+            CustomInput.Game.TouchDelta.canceled += OnMove;
+            CustomInput.Game.Tap.performed += OnShoot;
+            CustomInput.Game.Tap.canceled += OnShoot;
         }
 
         public void Dispose()
         {
-            CustomInput.KeysGameplay.Move.performed -= OnMove;
-            CustomInput.KeysGameplay.Move.canceled -= OnMove;
-            CustomInput.KeysGameplay.Shoot.performed -= OnShoot;
-            CustomInput.KeysGameplay.Shoot.canceled -= OnShoot;
+            CustomInput.Game.TouchDelta.performed -= OnMove;
+            CustomInput.Game.TouchDelta.canceled -= OnMove;
+            CustomInput.Game.Tap.performed -= OnShoot;
+            CustomInput.Game.Tap.canceled -= OnShoot;
 
-            CustomInput.KeysGameplay.Disable();
+            CustomInput.Game.Disable();
         }
 
         protected void OnMove(InputAction.CallbackContext ctx)

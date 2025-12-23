@@ -60,7 +60,7 @@ namespace TowerDefence.UI
 
             OnShow();
 
-            _fadeTween = _canvasGroup.DOFade(1f, 0.3f)
+            _fadeTween = _canvasGroup.DOFade(1f, 0.3f).SetUpdate(true)
                 .OnComplete(() =>
                 {
                     _canvasGroup.interactable = true;
