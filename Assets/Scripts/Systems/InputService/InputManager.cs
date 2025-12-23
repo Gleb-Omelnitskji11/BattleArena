@@ -35,7 +35,7 @@ namespace Systems.InputService
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
 
-            playerInputController.Subscribe();
+            playerInputController.Init();
             return playerInputController;
         }
     }

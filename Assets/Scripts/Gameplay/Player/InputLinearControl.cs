@@ -21,7 +21,7 @@ namespace Game.Player
             get => m_ShootPressed;
         }
 
-        public void Subscribe()
+        public void Init()
         {
             CustomInput = new Input();
 

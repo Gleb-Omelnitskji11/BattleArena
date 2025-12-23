@@ -16,6 +16,7 @@ namespace TowerDefence.Systems
         public event Action<Vector2> OnTap;
         public event Action<Vector2> OnHold;
         public event Action<Vector2> OnTouchMoved;
+        public event Action OnCancel;
 
         public void Init()
         {
@@ -24,6 +25,7 @@ namespace TowerDefence.Systems
             _input.Game.Tap.performed += HandleTap;
             _input.Game.Hold.performed += HandleHold;
             _input.Game.TouchDelta.performed += HandleTouchMoved;
+            _input.Game.Press.canceled += HandlePressCancel;
 
             Enable();
         }
@@ -62,6 +64,8 @@ namespace TowerDefence.Systems
             _input.Game.Tap.performed -= HandleTap;
             _input.Game.Hold.performed -= HandleHold;
             _input.Game.TouchDelta.performed -= HandleTouchMoved;
+            _input.Game.Tap.canceled -= HandlePressCancel;
+            _input.Game.Press.canceled -= HandlePressCancel;
             _input.Dispose();
         }
 
@@ -85,7 +89,7 @@ namespace TowerDefence.Systems
 
         public Vector2 GetTouchPosition()
         {
-            return _input?.Game.TouchPosition.ReadValue<Vector2>() ?? Vector2.zero;
+            return _input?.Game.TouchPosition?.ReadValue<Vector2>() ?? Vector2.zero;
         }
 
         private void HandleTap(InputAction.CallbackContext context)
@@ -106,6 +110,11 @@ namespace TowerDefence.Systems
             }
 
             OnHold?.Invoke(GetTouchPosition());
+        }
+
+        private void HandlePressCancel(InputAction.CallbackContext context)
+        {
+            OnCancel?.Invoke();
         }
 
         private void HandleTouchMoved(InputAction.CallbackContext context)

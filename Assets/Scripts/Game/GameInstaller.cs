@@ -4,6 +4,7 @@ using TowerDefence.Data;
 using TowerDefence.Systems;
 using TowerDefence.UI;
 
+
 namespace TowerDefence.Game
 {
     public static class GameInstaller
@@ -14,7 +15,8 @@ namespace TowerDefence.Game
             services.RegisterLazy<IStateMachine, StateMachine>();
             services.RegisterLazy<ISceneLoader, SceneLoaderService>();
             services.RegisterLazy<IObjectPooler, ObjectPooler>();
-            services.RegisterLazy<IInputManager, InputManager>();/// todo
+            services.RegisterLazy<IInputService, InputService>();
+            //services.RegisterLazy<IInputManager, InputManager>();/// todo
             services.RegisterLazy<IConfigProvider, ConfigProvider>();
             services.RegisterLazy<IScreenRouter, ScreenRouter>();
             services.RegisterLazy<IUIRegistry, UIRegistry>();

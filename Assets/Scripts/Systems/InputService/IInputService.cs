@@ -22,6 +22,7 @@ namespace TowerDefence.Systems
         event Action<Vector2> OnTap;
         event Action<Vector2> OnHold;
         event Action<Vector2> OnTouchMoved;
+        event Action OnCancel;
         
         // Utility
         bool IsPointerOverUI();

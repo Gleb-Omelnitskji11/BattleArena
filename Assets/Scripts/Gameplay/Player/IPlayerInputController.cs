@@ -8,6 +8,6 @@ namespace Game.Player
         Vector2 MoveInput { get;}
         bool ShootPressed { get;}
 
-        void Subscribe();
+        void Init();
     }
 }
