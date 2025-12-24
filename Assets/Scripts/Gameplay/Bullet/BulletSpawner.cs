@@ -7,13 +7,12 @@ namespace Game.Bullet
     public class BulletSpawner : MonoBehaviour
     {
         [SerializeField]
-        private Bullet m_BulletPrefab;
+        private ProjectileConfig m_ProjectileConfig;
 
-        private readonly List<Bullet> m_PooledBullets = new List<Bullet>();
+        private readonly Dictionary<ProjectileType, List<Projectile>> m_PooledProjectiles =
+            new Dictionary<ProjectileType, List<Projectile>>();
 
         public static BulletSpawner Instance;
-        private const float BulletSpeed = 15f;
-        private const string PlayerBulletTag = "PlayerBullet";
 
         private void Awake()
         {
@@ -22,42 +21,56 @@ namespace Game.Bullet
 
         public void Clear()
         {
-            foreach (var bullet in m_PooledBullets)
+            foreach (var projectileList in m_PooledProjectiles)
             {
-                bullet.TurnOff();
+                foreach (var projectile in projectileList.Value)
+                {
+                    projectile.gameObject.SetActive(false);
+                }
             }
         }
 
-        public void SpawnBullet(Transform startPoint)
+        public void SpawnProjectile(Transform startPoint, ProjectileType projectileType, string teamId)
         {
-            var bullet = GetFreeBullet();
-            var bulletTransform = bullet.transform;
-            bulletTransform.position = startPoint.position;
-            bulletTransform.rotation = startPoint.rotation;
-            bullet.tag = PlayerBulletTag;
-            bullet.StartMove(BulletSpeed);
+            var projectile = GetProjectile(projectileType);
+            var projectileTransform = projectile.transform;
+            projectileTransform.position = startPoint.position;
+            projectileTransform.rotation = startPoint.rotation;
+            projectile.tag = teamId;
+
+            var model = m_ProjectileConfig.GetCharacterModel(projectileType);
+            projectile.StartMove(model.Speed);
         }
 
-        private Bullet GetFreeBullet()
+        private Projectile GetProjectile(ProjectileType projectileType)
         {
-            foreach (var bullet in m_PooledBullets)
+            if (!m_PooledProjectiles.TryGetValue(projectileType, out List<Projectile> pooledProjectile))
+                return CreateNew(projectileType);
+
+            foreach (var projectile in pooledProjectile)
             {
-                if (!bullet.IsBusy)
+                if (!projectile.gameObject.activeInHierarchy)
                 {
-                    bullet.gameObject.SetActive(true);
-                    return bullet;
+                    return projectile;
                 }
             }
 
-            return CreateNew();
+            return CreateNew(projectileType);
         }
 
-        private Bullet CreateNew()
+        private Projectile CreateNew(ProjectileType projectileType)
         {
-            Bullet bullet = Instantiate(m_BulletPrefab);
-            bullet.gameObject.SetActive(true);
-            m_PooledBullets.Add(bullet);
-            return bullet;
+            var model = m_ProjectileConfig.GetCharacterModel(projectileType);
+            Projectile projectile = Instantiate(model.ProjectilePrefab);
+            projectile.gameObject.SetActive(true);
+            List<Projectile> projectiles = new List<Projectile>();
+            projectiles.Add(projectile);
+
+            if (m_PooledProjectiles.TryGetValue(projectileType, out List<Projectile> pooledProjectile))
+                pooledProjectile.Add(projectile);
+
+            m_PooledProjectiles.Add(projectileType, projectiles);
+            return projectile;
         }
     }
 }

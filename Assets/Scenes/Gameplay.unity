@@ -516,7 +516,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f3c1c313d66538418205e564228a3e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Bullet.BulletSpawner
-  m_BulletPrefab: {fileID: 7020479468874931812, guid: 7c0f80b536a03b542a451e5fb3dfa3a9, type: 3}
+  m_ProjectileConfig: {fileID: 11400000, guid: 8907a7026ee589c458413f809902ed5a, type: 2}
 --- !u!4 &526433158
 Transform:
   m_ObjectHideFlags: 0
@@ -1307,6 +1307,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1412697775}
   m_CullTransparentMesh: 1
+--- !u!1 &1527589195
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1527589197}
+  - component: {fileID: 1527589196}
+  m_Layer: 0
+  m_Name: UnitSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1527589196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1527589195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dec13980748a3a45b47436f69b79ec1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitSpawner
+  m_Field: {fileID: 1805231344}
+  m_CharactersConfig: {fileID: 11400000, guid: 035f7a02d6695024aab5c50b132fdfc2, type: 2}
+  m_LevelProgressChecker: {fileID: 1749506495}
+--- !u!4 &1527589197
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1527589195}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -12.48171, y: 7.12376, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1749506494
 GameObject:
   m_ObjectHideFlags: 0
@@ -1336,9 +1383,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5666086eb0920d2488f0f55630510495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelProgressChecker
-  m_FieldView: {fileID: 1805231344}
   m_LevelConfig: {fileID: 11400000, guid: 1487693a681b9fb428dfc5d1b0250e2f, type: 2}
-  m_PlayerPrefab: {fileID: 5935204621709276375, guid: f5f5b572cd42dbb4980ea85f94af69bc, type: 3}
+  m_UnitSpawner: {fileID: 1527589196}
 --- !u!4 &1749506496
 Transform:
   m_ObjectHideFlags: 0
@@ -1506,9 +1552,17 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 809469252702214698, guid: 91e97fb211ed7a442a7ec5357f8698a4, type: 3}
+      propertyPath: m_TagString
+      value: Neutral
+      objectReference: {fileID: 0}
     - target: {fileID: 809469252995138228, guid: 91e97fb211ed7a442a7ec5357f8698a4, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 809469252995138228, guid: 91e97fb211ed7a442a7ec5357f8698a4, type: 3}
+      propertyPath: m_TagString
+      value: Neutral
       objectReference: {fileID: 0}
     - target: {fileID: 809469252995138229, guid: 91e97fb211ed7a442a7ec5357f8698a4, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1522,6 +1576,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 809469253432523559, guid: 91e97fb211ed7a442a7ec5357f8698a4, type: 3}
+      propertyPath: m_TagString
+      value: Neutral
+      objectReference: {fileID: 0}
     - target: {fileID: 809469253756461618, guid: 91e97fb211ed7a442a7ec5357f8698a4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 38.5
@@ -1529,6 +1587,10 @@ PrefabInstance:
     - target: {fileID: 809469253756461621, guid: 91e97fb211ed7a442a7ec5357f8698a4, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 809469253756461621, guid: 91e97fb211ed7a442a7ec5357f8698a4, type: 3}
+      propertyPath: m_TagString
+      value: Neutral
       objectReference: {fileID: 0}
     - target: {fileID: 809469253952813240, guid: 91e97fb211ed7a442a7ec5357f8698a4, type: 3}
       propertyPath: m_Size.x
@@ -1628,7 +1690,6 @@ MonoBehaviour:
   - {fileID: 1805231342}
   - {fileID: 1805231341}
   - {fileID: 1805231340}
-  m_EnemyConfig: {fileID: 11400000, guid: 035f7a02d6695024aab5c50b132fdfc2, type: 2}
 --- !u!1 &2047213008
 GameObject:
   m_ObjectHideFlags: 0
@@ -1775,5 +1836,6 @@ SceneRoots:
   - {fileID: 1805231338}
   - {fileID: 464872241}
   - {fileID: 102369733}
-  - {fileID: 1749506496}
+  - {fileID: 1527589197}
   - {fileID: 526433158}
+  - {fileID: 1749506496}

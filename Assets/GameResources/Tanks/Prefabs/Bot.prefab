@@ -641,11 +641,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2852376813767108511}
-  - component: {fileID: 8531558842867251644}
+  - component: {fileID: -6955522815953791968}
   - component: {fileID: 3861474658496531092}
   - component: {fileID: 410007338837025828}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: Bot
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -672,7 +672,7 @@ Transform:
   - {fileID: 3234377159706433201}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8531558842867251644
+--- !u!114 &-6955522815953791968
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -681,11 +681,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2852376813767108512}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1bebef1532c42cc4f8ece3a41e8ff9bd, type: 3}
+  m_Script: {fileID: 11500000, guid: 04d9fc54e786475449df98e05d038113, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  m_BulletSpawnPoint: {fileID: 3234377159706433201}
-  m_TeamHightlight: {fileID: 2852376813267741916}
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterView
+  m_TeamHighlight: {fileID: 2852376813267741916}
+  m_ProjectileSpawnPoint: {fileID: 3234377159706433201}
 --- !u!61 &3861474658496531092
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -769,7 +769,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3234377159706433201}
   m_Layer: 0
-  m_Name: SpawnPoint
+  m_Name: BulletSpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
