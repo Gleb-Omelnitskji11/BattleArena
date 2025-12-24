@@ -16,7 +16,7 @@ public class CharacterView : MonoBehaviour
     private IAttackExecutor m_AttackExecutor;
     private ICharacterController m_Controller;
     public TeamId TeamId => CharacterModel.TeamId;
-    public Vector2 Direction => m_MovementController.Direction;
+    public Vector2 Direction => m_MovementController.MoveDirection;
 
     private bool m_Active;
 
@@ -79,6 +79,7 @@ public class CharacterView : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (!m_Active) return;
         OnCollision?.Invoke(collision.gameObject);
 
         if (collision.gameObject.tag.Equals(GetEnemyTeamID().ToString())

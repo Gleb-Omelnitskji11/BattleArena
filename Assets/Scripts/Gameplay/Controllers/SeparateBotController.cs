@@ -4,7 +4,6 @@ using UnityEngine;
 public class SeparateBotController : ICharacterController, IDisposable
 {
     private readonly CharacterView m_CharacterView;
-    private CharacterModel m_Model;
     private readonly ITargetDetector m_Detector;
 
     private CharacterView m_CurrentTarget;
@@ -16,6 +15,7 @@ public class SeparateBotController : ICharacterController, IDisposable
         m_CharacterView = view;
         m_Detector = detector;
         view.OnDie += OnDie;
+        view.OnCollision += OnCollision;
     }
 
     public void Tick()
@@ -23,10 +23,7 @@ public class SeparateBotController : ICharacterController, IDisposable
         if (m_Detector.TryDetectTarget(out var target))
         {
             m_CurrentTarget = target;
-        }
-
-        if (m_CurrentTarget != null)
-        {
+            Debug.Log("Detected");
             Vector2 dir = (m_CurrentTarget.transform.position - m_CharacterView.transform.position).normalized;
 
             dir = ClampToCardinal(dir);
@@ -40,7 +37,7 @@ public class SeparateBotController : ICharacterController, IDisposable
         }
         else
         {
-            Patrol();
+            UpdatePatrol();
         }
     }
 
@@ -57,7 +54,7 @@ public class SeparateBotController : ICharacterController, IDisposable
         return dot >= cosThreshold;
     }
 
-    private void Patrol()
+    private void UpdatePatrol()
     {
         if (m_CurrentDirection == Vector2.zero)
         {
@@ -65,6 +62,15 @@ public class SeparateBotController : ICharacterController, IDisposable
         }
 
         m_CharacterView.UpdateDirection(m_CurrentDirection);
+    }
+
+    private void OnCollision(GameObject obj)
+    {
+        if (obj.tag.Equals(m_CharacterView.CharacterModel.TeamId.ToString()) || obj.tag.Equals(TeamId.Neutral.ToString()))
+        {
+            m_CurrentDirection = GetRandomDirection();
+            m_CharacterView.UpdateDirection(m_CurrentDirection);
+        }
     }
 
     private Vector2 GetRandomDirection()
@@ -76,7 +82,8 @@ public class SeparateBotController : ICharacterController, IDisposable
             0 => Vector2.up,
             1 => Vector2.down,
             2 => Vector2.left,
-            _ => Vector2.right
+            3 => Vector2.right,
+            _ => Vector2.zero
         };
     }
 
@@ -91,6 +98,9 @@ public class SeparateBotController : ICharacterController, IDisposable
     public void Dispose()
     {
         m_CharacterView.StopMove();
+        
+        m_CharacterView.OnCollision -= OnCollision;
+        m_CharacterView.OnDie -= OnDie;
     }
 
     private void OnDie()

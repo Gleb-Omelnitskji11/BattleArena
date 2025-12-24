@@ -1,5 +1,4 @@
 using System;
-using Game.Bullet;
 using TowerDefence.Core;
 using TowerDefence.Game;
 using TowerDefence.Systems;
@@ -8,7 +7,6 @@ using UnityEngine;
 public class SeparatePlayerController : ICharacterController, IDisposable
 {
     private readonly CharacterView m_CharacterView;
-    private CharacterModel m_Model;
     private IInputService m_PlayerInputController;
 
     private bool m_AttackPressed;
@@ -54,6 +52,7 @@ public class SeparatePlayerController : ICharacterController, IDisposable
 
     public void Tick()
     {
+        
     }
     
     private void OnHold(Vector2 screenPos)

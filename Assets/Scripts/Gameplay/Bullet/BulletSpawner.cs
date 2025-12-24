@@ -69,7 +69,8 @@ namespace Game.Bullet
             if (m_PooledProjectiles.TryGetValue(projectileType, out List<Projectile> pooledProjectile))
                 pooledProjectile.Add(projectile);
 
-            m_PooledProjectiles.Add(projectileType, projectiles);
+            else m_PooledProjectiles.Add(projectileType, projectiles);
+
             return projectile;
         }
     }

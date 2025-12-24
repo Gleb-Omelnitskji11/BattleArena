@@ -66,6 +66,16 @@ public class LevelProgressChecker : MonoBehaviour, IService
                 bot.CharacterView.OnDie += CheckGameOver;
             }
         }
+        
+        foreach (var model in alliesLevelModels)
+        {
+            for (int i = 0; i < model.Amount; i++)
+            {
+                SeparateBotController bot = m_UnitSpawner.SpawnBot(model.RaceType, false);
+                AllBots.Add(bot.CharacterView);
+                bot.CharacterView.OnDie += CheckGameOver;
+            }
+        }
     }
 
     private void CheckGameOver()
