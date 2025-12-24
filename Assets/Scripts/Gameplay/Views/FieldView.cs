@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Game.Enemy;
-using Game.Player;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
-namespace Game.Tanks
+namespace Gameplay.Views
 {
     public class FieldView : MonoBehaviour
     {

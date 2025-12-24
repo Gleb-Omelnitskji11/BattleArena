@@ -1,9 +1,12 @@
-public struct MovementStats
+namespace Gameplay.Models
 {
-    public float Speed;
-
-    public MovementStats(float speed)
+    public struct MovementStats
     {
-        Speed = speed;
+        public float Speed;
+
+        public MovementStats(float speed)
+        {
+            Speed = speed;
+        }
     }
 }

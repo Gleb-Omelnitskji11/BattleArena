@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.Bullet
+namespace Gameplay.Bullet
 {
     public class Projectile : MonoBehaviour
     {

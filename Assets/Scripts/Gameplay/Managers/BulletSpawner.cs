@@ -1,21 +1,33 @@
 using System.Collections.Generic;
-using System.Linq;
+using Gameplay.Bullet;
+using Gameplay.ConfigScripts;
+using Gameplay.Models;
+using TowerDefence.Core;
+using TowerDefence.Data;
 using UnityEngine;
 
-namespace Game.Bullet
+namespace Gameplay.Managers
 {
     public class BulletSpawner : MonoBehaviour
     {
-        [SerializeField]
-        private ProjectileConfig m_ProjectileConfig;
-
         private readonly Dictionary<ProjectileType, List<Projectile>> m_PooledProjectiles =
             new Dictionary<ProjectileType, List<Projectile>>();
+
+        private ProjectileConfig m_ProjectileConfig;
 
         public static BulletSpawner Instance;
 
         private void Awake()
         {
+            if (Services.TryGet<IConfigProvider>(out IConfigProvider configProvider))
+            {
+                if (configProvider.TryGet<ProjectileConfig>("ProjectilesConfig", out ProjectileConfig projectileConfig))
+                {
+                    m_ProjectileConfig = projectileConfig;
+                }
+            }
+            
+            
             Instance = this;
         }
 

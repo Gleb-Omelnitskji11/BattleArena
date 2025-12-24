@@ -1,5 +1,8 @@
-public interface ICharacterController
+namespace Gameplay.Controllers
 {
-    void Tick();
-    void Dispose();
+    public interface ICharacterController
+    {
+        void Tick();
+        void Dispose();
+    }
 }

@@ -1,28 +1,32 @@
 using System;
+using Gameplay.Models;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "LevelConfig", menuName = "Scriptable Objects/LevelConfig")]
-public class LevelConfig : ScriptableObject
+namespace Gameplay.ConfigScripts
 {
-    public LevelModel[] LevelModels = Array.Empty<LevelModel>();
-
-    public LevelModel GetDefaultLevel()
+    [CreateAssetMenu(fileName = "LevelConfig", menuName = "Scriptable Objects/LevelConfig")]
+    public class LevelConfig : ScriptableObject
     {
-        return LevelModels[0];
+        public LevelModel[] LevelModels = Array.Empty<LevelModel>();
+
+        public LevelModel GetDefaultLevel()
+        {
+            return LevelModels[0];
+        }
     }
-}
 
-[Serializable]
-public class LevelModel
-{
-    public RaceType PlayerRace;
-    public BotLevelModel[] Enemies = Array.Empty<BotLevelModel>();
-    public BotLevelModel[] Allies = Array.Empty<BotLevelModel>();
-}
+    [Serializable]
+    public class LevelModel
+    {
+        public RaceType PlayerRace;
+        public BotLevelModel[] Enemies = Array.Empty<BotLevelModel>();
+        public BotLevelModel[] Allies = Array.Empty<BotLevelModel>();
+    }
 
-[Serializable]
-public class BotLevelModel
-{
-    public RaceType RaceType;
-    public int Amount;
+    [Serializable]
+    public class BotLevelModel
+    {
+        public RaceType RaceType;
+        public int Amount;
+    }
 }

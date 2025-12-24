@@ -1,9 +1,12 @@
 using UnityEngine;
 
-public interface IMovementController
+namespace Gameplay.Controllers
 {
-    Vector2 MoveDirection { get; }
-    void SetDirection(Vector2 direction, bool canMove = true);
-    void Move(float deltaTime);
-    void Stop();
+    public interface IMovementController
+    {
+        Vector2 MoveDirection { get; }
+        void SetDirection(Vector2 direction, bool canMove = true);
+        void Move(float deltaTime);
+        void Stop();
+    }
 }

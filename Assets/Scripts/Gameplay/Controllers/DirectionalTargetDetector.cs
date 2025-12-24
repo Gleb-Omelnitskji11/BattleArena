@@ -1,4 +1,8 @@
 using System.Collections.Generic;
+using Gameplay.Controllers;
+using Gameplay.Managers;
+using Gameplay.Models;
+using Gameplay.Views;
 using UnityEngine;
 
 public class DirectionalTargetDetector : ITargetDetector

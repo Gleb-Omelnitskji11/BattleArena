@@ -1,91 +1,95 @@
 using System;
+using Gameplay.Views;
 using TowerDefence.Core;
 using TowerDefence.Game;
 using TowerDefence.Systems;
 using UnityEngine;
 
-public class SeparatePlayerController : ICharacterController, IDisposable
+namespace Gameplay.Controllers
 {
-    private readonly CharacterView m_CharacterView;
-    private IInputService m_PlayerInputController;
-
-    private bool m_AttackPressed;
-    private IEventBus m_EventBus;
-    
-    public CharacterView CharacterView => m_CharacterView;
-
-    public SeparatePlayerController(CharacterView characterView)
+    public class SeparatePlayerController : ICharacterController, IDisposable
     {
-        m_CharacterView = characterView;
+        private readonly CharacterView m_CharacterView;
+        private IInputService m_PlayerInputController;
 
-        SetSystems();
-    }
+        private bool m_AttackPressed;
+        private IEventBus m_EventBus;
     
-    private void SetSystems()
-    {
-        m_EventBus = Services.Get<IEventBus>();
+        public CharacterView CharacterView => m_CharacterView;
 
-        if (Services.TryGet<IInputService>(out var inputService))
+        public SeparatePlayerController(CharacterView characterView)
         {
-            m_PlayerInputController = inputService;
+            m_CharacterView = characterView;
+
+            SetSystems();
         }
-            
-        m_PlayerInputController.OnHold += OnHold;
-        m_PlayerInputController.OnTap += OnTap;
-        m_PlayerInputController.OnTouchMoved += OnTouchMoved;
-        m_PlayerInputController.OnCancel += OnTouchCancelled;
-        
-        m_CharacterView.OnCollision += OnCollision;
-        m_CharacterView.OnDie += OnDie;
-    }
-
-    public void Dispose()
-    {
-        m_PlayerInputController.OnHold -= OnHold;
-        m_PlayerInputController.OnTap -= OnTap;
-        m_PlayerInputController.OnTouchMoved -= OnTouchMoved;
-        m_PlayerInputController.OnCancel -= OnTouchCancelled;
-        
-        m_CharacterView.OnCollision -= OnCollision;
-        m_CharacterView.OnDie -= OnDie;
-    }
-
-    public void Tick()
-    {
-        
-    }
     
-    private void OnHold(Vector2 screenPos)
-    {
-        m_CharacterView.UpdateDirection(screenPos);
+        private void SetSystems()
+        {
+            m_EventBus = Services.Get<IEventBus>();
 
-        if(screenPos == Vector2.zero) m_CharacterView.StopMove();
-    }
-
-    private void OnTouchMoved(Vector2 screenPos)
-    {
-        m_CharacterView.UpdateDirection(screenPos);
-        if(screenPos == Vector2.zero) m_CharacterView.StopMove();
-    }
-
-    private void OnTouchCancelled()
-    {
-        m_CharacterView.StopMove();
-    }
+            if (Services.TryGet<IInputService>(out var inputService))
+            {
+                m_PlayerInputController = inputService;
+            }
+            
+            m_PlayerInputController.OnHold += OnHold;
+            m_PlayerInputController.OnTap += OnTap;
+            m_PlayerInputController.OnTouchMoved += OnTouchMoved;
+            m_PlayerInputController.OnCancel += OnTouchCancelled;
         
-    private void OnTap(Vector2 screenPos)
-    {
-        m_CharacterView.UpdateDirection(screenPos, false);
-        m_CharacterView.Attack();
-    }
+            m_CharacterView.OnCollision += OnCollision;
+            m_CharacterView.OnDie += OnDie;
+        }
 
-    private void OnCollision(GameObject obj)
-    {
-        m_CharacterView.StopMove();
-    }
+        public void Dispose()
+        {
+            m_PlayerInputController.OnHold -= OnHold;
+            m_PlayerInputController.OnTap -= OnTap;
+            m_PlayerInputController.OnTouchMoved -= OnTouchMoved;
+            m_PlayerInputController.OnCancel -= OnTouchCancelled;
+        
+            m_CharacterView.OnCollision -= OnCollision;
+            m_CharacterView.OnDie -= OnDie;
+        }
 
-    private void OnDie()
-    {
-        m_EventBus.Publish(new GameOverEvent());
+        public void Tick()
+        {
+        
+        }
+    
+        private void OnHold(Vector2 screenPos)
+        {
+            m_CharacterView.UpdateDirection(screenPos);
+
+            if(screenPos == Vector2.zero) m_CharacterView.StopMove();
+        }
+
+        private void OnTouchMoved(Vector2 screenPos)
+        {
+            m_CharacterView.UpdateDirection(screenPos);
+            if(screenPos == Vector2.zero) m_CharacterView.StopMove();
+        }
+
+        private void OnTouchCancelled()
+        {
+            m_CharacterView.StopMove();
+        }
+        
+        private void OnTap(Vector2 screenPos)
+        {
+            m_CharacterView.UpdateDirection(screenPos, false);
+            m_CharacterView.Attack();
+        }
+
+        private void OnCollision(GameObject obj)
+        {
+            m_CharacterView.StopMove();
+        }
+
+        private void OnDie()
+        {
+            m_EventBus.Publish(new GameOverEvent());
+        }
     }
 }

@@ -1,24 +1,28 @@
 using System;
 using System.Linq;
-using Game.Bullet;
+using Gameplay.Bullet;
+using Gameplay.Models;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ProjectileConfig", menuName = "Scriptable Objects/ProjectileConfig")]
-public class ProjectileConfig : ScriptableObject
+namespace Gameplay.ConfigScripts
 {
-    [SerializeField]
-    private ProjectileConfigModel[] m_Projectiles;
-    
-    public ProjectileConfigModel GetCharacterModel(ProjectileType projectileType)
+    [CreateAssetMenu(fileName = "ProjectileConfig", menuName = "Scriptable Objects/ProjectileConfig")]
+    public class ProjectileConfig : ScriptableObject
     {
-        return m_Projectiles.FirstOrDefault(x => x.ProjectileType == projectileType);
+        [SerializeField]
+        private ProjectileConfigModel[] m_Projectiles;
+    
+        public ProjectileConfigModel GetCharacterModel(ProjectileType projectileType)
+        {
+            return m_Projectiles.FirstOrDefault(x => x.ProjectileType == projectileType);
+        }
     }
-}
 
-[Serializable]
-public class ProjectileConfigModel
-{
-    public Projectile ProjectilePrefab;
-    public float Speed;
-    public ProjectileType ProjectileType;
+    [Serializable]
+    public class ProjectileConfigModel
+    {
+        public Projectile ProjectilePrefab;
+        public float Speed;
+        public ProjectileType ProjectileType;
+    }
 }

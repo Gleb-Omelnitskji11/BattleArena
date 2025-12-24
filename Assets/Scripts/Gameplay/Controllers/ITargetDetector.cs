@@ -1,5 +1,10 @@
-public interface ITargetDetector
+using Gameplay.Views;
+
+namespace Gameplay.Controllers
 {
-    bool TryDetectTarget(out CharacterView target);
-    void UpdateEnemies();
+    public interface ITargetDetector
+    {
+        bool TryDetectTarget(out CharacterView target);
+        void UpdateEnemies();
+    }
 }

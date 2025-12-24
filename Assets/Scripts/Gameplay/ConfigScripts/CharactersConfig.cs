@@ -1,9 +1,10 @@
 using System;
 using System.Linq;
+using Gameplay.Models;
+using Gameplay.Views;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Game.Enemy
+namespace Gameplay.ConfigScripts
 {
     [CreateAssetMenu(fileName = "CharactersConfig", menuName = "Scriptable Objects/CharactersConfig", order = 0)]
     public class CharactersConfig : ScriptableObject
