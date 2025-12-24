@@ -12,4 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad48d26e1bbf74c67a439c34b8d94e86, type: 3}
   m_Name: ConfigProviderRegistry
   m_EditorClassIdentifier: Assembly-CSharp::TowerDefence.Data.ConfigProviderRegistry
-  _configs: []
+  _configs:
+  - _key: CharactersConfig
+    _config: {fileID: 11400000, guid: 035f7a02d6695024aab5c50b132fdfc2, type: 2}
+  - _key: LevelsConfig
+    _config: {fileID: 11400000, guid: 1487693a681b9fb428dfc5d1b0250e2f, type: 2}
+  - _key: ProjectilesConfig
+    _config: {fileID: 11400000, guid: 8907a7026ee589c458413f809902ed5a, type: 2}
