@@ -8,28 +8,28 @@ namespace Gameplay.Controllers
     {
         private readonly Transform m_StartPoint;
         private readonly AttackComponent m_AttackComponent;
-        private readonly string m_AllyTag;
+        private readonly int m_Damage;
         private readonly ProjectileType m_ProjectileType;
 
-        public SimpleAttackExecutor(Transform startPoint, AttackComponent attackComponent, string allyTag)
+        public SimpleAttackExecutor(Transform startPoint, AttackComponent attackComponent, int damage)
         {
             m_StartPoint = startPoint;
             m_AttackComponent = attackComponent;
-            m_AllyTag = allyTag;
+            m_Damage = damage;
         }
 
-        public void TryAttack()
+        public void TryAttack(string tag)
         {
             if (!m_AttackComponent.CanAttack(Time.time))
                 return;
 
-            BulletSpawner.Instance.SpawnProjectile(m_StartPoint, m_ProjectileType, m_AllyTag);
+            BulletSpawner.Instance.SpawnProjectile(m_StartPoint, m_ProjectileType, tag, m_Damage);
             m_AttackComponent.RegisterAttack(Time.time);
         }
     }
 
     public interface IAttackExecutor
     {
-        void TryAttack();
+        void TryAttack(string tag);
     }
 }

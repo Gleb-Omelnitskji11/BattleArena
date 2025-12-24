@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Gameplay.ConfigScripts;
 using Gameplay.Controllers;
@@ -18,7 +19,7 @@ namespace Gameplay.Managers
         private IEventBus m_EventBus;
         private LevelConfig m_LevelConfig;
 
-        public readonly List<CharacterView> AllBots = new List<CharacterView>();
+        public readonly List<SeparateBotController> AllBots = new List<SeparateBotController>();
         public SeparatePlayerController Player { get; private set; }
 
         private void Awake()
@@ -77,7 +78,7 @@ namespace Gameplay.Managers
                 for (int i = 0; i < model.Amount; i++)
                 {
                     SeparateBotController bot = m_UnitSpawner.SpawnBot(model.RaceType, true);
-                    AllBots.Add(bot.CharacterView);
+                    AllBots.Add(bot);
                     bot.CharacterView.OnDie += CheckGameOver;
                 }
             }
@@ -87,7 +88,7 @@ namespace Gameplay.Managers
                 for (int i = 0; i < model.Amount; i++)
                 {
                     SeparateBotController bot = m_UnitSpawner.SpawnBot(model.RaceType, false);
-                    AllBots.Add(bot.CharacterView);
+                    AllBots.Add(bot);
                     bot.CharacterView.OnDie += CheckGameOver;
                 }
             }
@@ -97,7 +98,8 @@ namespace Gameplay.Managers
         {
             foreach (var bot in AllBots)
             {
-                if (bot.TeamId != Player.CharacterView.TeamId)
+                bot.UpdateTargets(AllBots);
+                if (bot.CharacterView.TeamId != Player.CharacterView.TeamId)
                     return;
             }
 
@@ -113,7 +115,7 @@ namespace Gameplay.Managers
         {
             for (int i = 0; i < AllBots.Count; i++)
             {
-                AllBots[i].gameObject.SetActive(false);
+                AllBots[i].CharacterView.gameObject.SetActive(false);
             }
 
             Player?.CharacterView.gameObject.SetActive(false);

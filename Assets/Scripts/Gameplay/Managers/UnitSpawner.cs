@@ -45,7 +45,7 @@ namespace Gameplay.Managers
         {
             var view = CreateNewCharacter(type);
             view.SetTeam(isEnemy ? TeamId.Red : TeamId.Blue, false);
-            ITargetDetector detector = new DirectionalTargetDetector(view.transform, view, m_LevelProgressChecker);
+            ITargetDetector detector = new DirectionalTargetDetector(view.transform, view);
             view.transform.position = GetRandomPositionForNew(false);
 
             SeparateBotController bot = new SeparateBotController(view, detector);
@@ -74,7 +74,7 @@ namespace Gameplay.Managers
             MovementStats movementStats = new MovementStats(characterConfigModel.Speed);
 
             CharacterModel characterModel = new CharacterModel(TeamId.Neutral, RaceType.Tank, healthComponent,
-                attackComponent, movementStats);
+                attackComponent, movementStats, characterConfigModel.Damage);
 
             CharacterView newUnit = Instantiate(characterConfigModel.CharacterPrefab);
             newUnit.Init(characterModel);
@@ -107,7 +107,7 @@ namespace Gameplay.Managers
 
             foreach (var enemy in m_LevelProgressChecker.AllBots)
             {
-                if (enemy != null && !IsDistanceSufficient(enemy.transform.position, placeToSpawn))
+                if (enemy != null && !IsDistanceSufficient(enemy.CharacterView.transform.position, placeToSpawn))
                     return false;
             }
 

@@ -7,6 +7,9 @@ TagManager:
   - Enemy
   - PlayerBullet
   - Neutral
+  - Border
+  - Red
+  - Blue
   layers:
   - Default
   - TransparentFX

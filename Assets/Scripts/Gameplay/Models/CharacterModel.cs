@@ -10,15 +10,17 @@ namespace Gameplay.Models
         public HealthComponent Health { get; }
         public AttackComponent AttackComponent { get; }
         public MovementStats Movement { get; }
+        public int Damage { get; }
 
         public CharacterModel(TeamId teamId, RaceType race, HealthComponent health, AttackComponent gun,
-            MovementStats movement)
+            MovementStats movement, int damage)
         {
             TeamId = teamId;
             Race = race;
             Health = health;
             AttackComponent = gun;
             Movement = movement;
+            Damage = damage;
         }
 
         public void ChangeTeam(TeamId newTeam)

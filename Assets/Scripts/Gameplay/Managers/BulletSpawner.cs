@@ -42,7 +42,7 @@ namespace Gameplay.Managers
             }
         }
 
-        public void SpawnProjectile(Transform startPoint, ProjectileType projectileType, string teamId)
+        public void SpawnProjectile(Transform startPoint, ProjectileType projectileType, string teamId, int damage)
         {
             var projectile = GetProjectile(projectileType);
             var projectileTransform = projectile.transform;
@@ -51,7 +51,9 @@ namespace Gameplay.Managers
             projectile.tag = teamId;
 
             var model = m_ProjectileConfig.GetCharacterModel(projectileType);
-            projectile.StartMove(model.Speed);
+            
+            projectile.gameObject.SetActive(true);
+            projectile.Activate(damage, model.Speed);
         }
 
         private Projectile GetProjectile(ProjectileType projectileType)
@@ -74,7 +76,6 @@ namespace Gameplay.Managers
         {
             var model = m_ProjectileConfig.GetCharacterModel(projectileType);
             Projectile projectile = Instantiate(model.ProjectilePrefab);
-            projectile.gameObject.SetActive(true);
             List<Projectile> projectiles = new List<Projectile>();
             projectiles.Add(projectile);
 

@@ -9,9 +9,19 @@ namespace Gameplay.Bullet
 
         public int Damage { get; private set; }
 
-        public void StartMove(float bulletSpeed)
+        public void Activate(int damage, float bulletSpeed)
         {
+            Damage = damage;
             m_Rigidbody.linearVelocity = transform.up * bulletSpeed;
+        }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            if (!collision.gameObject.TryGetComponent<Projectile>(out Projectile projectile)) //not projectile
+            {
+                m_Rigidbody.linearVelocity = Vector2.zero;
+                gameObject.SetActive(false);
+            }
         }
     }
 }

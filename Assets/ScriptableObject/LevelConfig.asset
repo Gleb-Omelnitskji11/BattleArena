@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: LevelConfig
   m_EditorClassIdentifier: Assembly-CSharp::LevelConfig
   LevelModels:
-  - Enemies:
-    - EnemyType: 0
-      Amount: 5
+  - PlayerRace: 0
+    Enemies:
+    - RaceType: 0
+      Amount: 2
+    Allies: []

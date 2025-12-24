@@ -1,11 +1,13 @@
+using UnityEngine;
+
 namespace Gameplay.Controllers
 {
     public class AttackComponent
     {
-        public float FireRate { get; }
+        private float FireRate { get; }
         public int Damage { get; }
 
-        private float _lastAttackTime;
+        private float m_LastAttackTime;
 
         public AttackComponent(float fireRate, int damage)
         {
@@ -14,9 +16,11 @@ namespace Gameplay.Controllers
         }
 
         public bool CanAttack(float time)
-            => time - _lastAttackTime >= FireRate;
+        {
+            return time - m_LastAttackTime >= FireRate;
+        }
 
         public void RegisterAttack(float time)
-            => _lastAttackTime = time;
+            => m_LastAttackTime = time;
     }
 }

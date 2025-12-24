@@ -18,21 +18,20 @@ public class DirectionalTargetDetector : ITargetDetector
     private LevelProgressChecker m_LevelProgressChecker;
     
 
-    public DirectionalTargetDetector(Transform origin, CharacterView characterView, LevelProgressChecker levelProgressChecker)
+    public DirectionalTargetDetector(Transform origin, CharacterView characterView)
     {
         m_Origin = origin;
         m_View = characterView;
-        m_LevelProgressChecker = levelProgressChecker;
     }
 
-    public void UpdateEnemies()
+    public void UpdateEnemies(List<SeparateBotController> allBots)
     {
-        foreach (var character in m_LevelProgressChecker.AllBots)
+        foreach (var character in allBots)
         {
-            if (!IsEnemy(character))
+            if (!IsEnemy(character.CharacterView))
                 continue;
 
-            AllEnemies.Add(character);
+            AllEnemies.Add(character.CharacterView);
         }
     }
 
@@ -53,12 +52,13 @@ public class DirectionalTargetDetector : ITargetDetector
 
             if (target)
             {
-                //if character further then target
+                //if character2 further then character1
                 if ((target.transform.position - m_Origin.position).magnitude
                     <= (character.transform.position - m_Origin.position).magnitude)
                     continue;
             }
 
+            Debug.Log("FindTarget");
             target = character;
             return true;
         }

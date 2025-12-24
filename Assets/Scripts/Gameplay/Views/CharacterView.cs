@@ -30,8 +30,7 @@ namespace Gameplay.Views
 
             m_MovementController = new TankMovementController(transform, model.Movement);
 
-            m_AttackExecutor =
-                new SimpleAttackExecutor(m_ProjectileSpawnPoint, model.AttackComponent, model.TeamId.ToString());
+            m_AttackExecutor = new SimpleAttackExecutor(m_ProjectileSpawnPoint, model.AttackComponent, model.Damage);
 
             model.Health.OnDeath += HandleDeath;
         }
@@ -39,7 +38,10 @@ namespace Gameplay.Views
         public void SetTeam(TeamId teamId, bool isPlayer)
         {
             CharacterModel.ChangeTeam(teamId);
-            m_TeamHighlight.color = isPlayer ? Color.green : CharacterModel.TeamId == TeamId.Red ? Color.red : Color.blue;
+            gameObject.tag = teamId.ToString();
+
+            m_TeamHighlight.color =
+                isPlayer ? Color.green : CharacterModel.TeamId == TeamId.Red ? Color.red : Color.blue;
         }
 
         public void SetController(ICharacterController controller)
@@ -68,7 +70,7 @@ namespace Gameplay.Views
 
         public void Attack()
         {
-            m_AttackExecutor.TryAttack();
+            m_AttackExecutor.TryAttack(CharacterModel.TeamId.ToString());
         }
 
         public void TakeDamage(int damage)
@@ -84,10 +86,14 @@ namespace Gameplay.Views
         private void OnCollisionEnter2D(Collision2D collision)
         {
             if (!m_Active) return;
+
             OnCollision?.Invoke(collision.gameObject);
 
-            if (collision.gameObject.tag.Equals(GetEnemyTeamID().ToString())
-                && collision.gameObject.TryGetComponent<Projectile>(out Projectile projectile))
+            string enemyTag = GetEnemyTeamID().ToString();
+            bool isCollisionWithEnemy = collision.gameObject.tag.Equals(enemyTag);
+            bool isProjectile = collision.gameObject.TryGetComponent<Projectile>(out Projectile projectile);
+
+            if (isCollisionWithEnemy && isProjectile)
             {
                 TakeDamage(projectile.Damage);
             }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Gameplay.Models;
 using Gameplay.Views;
 using UnityEngine;
@@ -29,11 +30,11 @@ namespace Gameplay.Controllers
                 m_CurrentTarget = target;
                 Debug.Log("Detected");
                 Vector2 dir = (m_CurrentTarget.transform.position - m_CharacterView.transform.position).normalized;
-
+            
                 dir = ClampToCardinal(dir);
-
+            
                 m_CharacterView.UpdateDirection(dir);
-
+            
                 if (IsTargetInFront(m_CharacterView.transform, m_CurrentDirection, m_CurrentTarget.transform))
                 {
                     m_CharacterView.Attack();
@@ -43,6 +44,11 @@ namespace Gameplay.Controllers
             {
                 UpdatePatrol();
             }
+        }
+
+        public void UpdateTargets(List<SeparateBotController> allBots)
+        {
+            m_Detector.UpdateEnemies(allBots);
         }
 
         private bool IsTargetInFront(Transform bot, Vector2 botForward, Transform target)
@@ -70,7 +76,8 @@ namespace Gameplay.Controllers
 
         private void OnCollision(GameObject obj)
         {
-            if (obj.tag.Equals(m_CharacterView.CharacterModel.TeamId.ToString()) || obj.tag.Equals(TeamId.Neutral.ToString()))
+            if (obj.tag.Equals(m_CharacterView.CharacterModel.TeamId.ToString())
+                || obj.tag.Equals(TeamId.Neutral.ToString()))
             {
                 m_CurrentDirection = GetRandomDirection();
                 m_CharacterView.UpdateDirection(m_CurrentDirection);
@@ -101,14 +108,18 @@ namespace Gameplay.Controllers
 
         public void Dispose()
         {
+            Debug.Log("Disposing");
             m_CharacterView.StopMove();
-        
+
             m_CharacterView.OnCollision -= OnCollision;
             m_CharacterView.OnDie -= OnDie;
         }
 
         private void OnDie()
         {
+            int restore = (int)(m_CharacterView.CharacterModel.Health.MaxHp * 0.6f);
+            m_CharacterView.CharacterModel.Health.Restore(restore);
+
             TeamId enemyId = m_CharacterView.GetEnemyTeamID();
             m_CharacterView.SetTeam(enemyId, false);
         }

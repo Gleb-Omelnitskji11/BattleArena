@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Gameplay.Views;
 
 namespace Gameplay.Controllers
@@ -5,6 +6,6 @@ namespace Gameplay.Controllers
     public interface ITargetDetector
     {
         bool TryDetectTarget(out CharacterView target);
-        void UpdateEnemies();
+        void UpdateEnemies(List<SeparateBotController> allBots);
     }
 }
