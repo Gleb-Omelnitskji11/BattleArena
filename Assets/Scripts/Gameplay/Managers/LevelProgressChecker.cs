@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Gameplay.Managers
 {
-    public class LevelProgressChecker : MonoBehaviour, IService
+    public class LevelProgressChecker : MonoBehaviour, IService ///todo sepate levelLoader
     {
         [SerializeField]
         private UnitSpawner m_UnitSpawner;
@@ -69,13 +69,23 @@ namespace Gameplay.Managers
 
         private void SpawnPlayer(RaceType playerRace)
         {
-            Player = m_UnitSpawner.SpawnPlayer(playerRace);
+            if(Player == null) Player = m_UnitSpawner.SpawnPlayer(playerRace);
+                
+            else if (Player.CharacterView.CharacterModel.Race != playerRace)
+            {
+                Destroy(Player.CharacterView);
+            }
+
+            m_UnitSpawner.Shuffle(Player.CharacterView.transform, true);
             Player.CharacterView.OnDie += GameOver;
             Player.CharacterView.gameObject.SetActive(true);
         }
 
         private void SpawnBots(BotLevelModel[] enemyLevelModels, BotLevelModel[] alliesLevelModels)
         {
+            AllViews.Clear();
+            AllBots.Clear();
+
             foreach (var model in enemyLevelModels)
             {
                 for (int i = 0; i < model.Amount; i++)
@@ -112,7 +122,8 @@ namespace Gameplay.Managers
             {
                 bot.UpdateTargets(AllViews);
 
-                if (bot.CharacterView.TeamId != Player.CharacterView.TeamId && bot.CharacterView.gameObject.activeInHierarchy)
+                if (bot.CharacterView.TeamId != Player.CharacterView.TeamId
+                    && bot.CharacterView.gameObject.activeInHierarchy)
                     return;
             }
 
@@ -121,14 +132,18 @@ namespace Gameplay.Managers
 
         private void GameOver()
         {
+            Player.CharacterView.OnDie -= GameOver;
             m_EventBus.Publish(new GameOverEvent());
         }
 
         private void ClearLevel()
         {
+            m_UnitSpawner.Clear();
+
             for (int i = 0; i < AllBots.Count; i++)
             {
                 AllBots[i].CharacterView.gameObject.SetActive(false);
+                Destroy(AllBots[i].CharacterView.gameObject);
             }
 
             Player?.CharacterView.gameObject.SetActive(false);

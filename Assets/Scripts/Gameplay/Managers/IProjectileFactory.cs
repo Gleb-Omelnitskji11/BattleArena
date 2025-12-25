@@ -9,5 +9,6 @@ namespace Gameplay.Managers
         Projectile Spawn(ProjectileType type, Transform spawnPoint, string teamId, int damage);
 
         void Clear();
+        void RealiseAll();
     }
 }

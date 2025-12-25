@@ -11,7 +11,7 @@ public class DirectionalTargetDetector : ITargetDetector
     private readonly CharacterView m_View;
 
     private const float Radius = 30f;
-    private const float ViewAngle = 30f;
+    private const float ViewAngle = 15f;//Todo get value from config
 
     private readonly List<CharacterView> AllEnemies = new List<CharacterView>();
     private CharacterModel CharacterModel => m_View.CharacterModel;

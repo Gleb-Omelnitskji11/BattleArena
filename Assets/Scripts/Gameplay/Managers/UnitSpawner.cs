@@ -48,7 +48,7 @@ namespace Gameplay.Managers
 
         public void Clear()
         {
-            m_ProjectileFactory.Clear();
+            m_ProjectileFactory.RealiseAll();
         }
 
         public SeparatePlayerController SpawnPlayer(RaceType type)
@@ -56,10 +56,14 @@ namespace Gameplay.Managers
             var view = CreateNewCharacter(type);
 
             view.SetTeam(TeamId.Blue, true);
-            view.transform.position = GetRandomPositionForNew(true);
             SeparatePlayerController player = new SeparatePlayerController(view);
             view.SetController(player);
             return player;
+        }
+
+        public void Shuffle(Transform objTransform, bool isPlayer)
+        {
+            objTransform.position = GetRandomPositionForNew(true);
         }
 
         public SeparateBotController SpawnBot(RaceType type, bool isEnemy)
