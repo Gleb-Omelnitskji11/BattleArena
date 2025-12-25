@@ -7,5 +7,6 @@ namespace Gameplay.Controllers
     {
         bool TryDetectTarget(out CharacterView target);
         void UpdateEnemies(List<SeparateBotController> allBots);
+        bool IsEnemy(CharacterView candidate);
     }
 }

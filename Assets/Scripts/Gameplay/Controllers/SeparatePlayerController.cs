@@ -7,21 +7,34 @@ using UnityEngine;
 
 namespace Gameplay.Controllers
 {
-    public class SeparatePlayerController : ICharacterController, IDisposable
+    public class SeparatePlayerController : ICharacterController
     {
         private readonly CharacterView m_CharacterView;
         private IInputService m_PlayerInputController;
 
         private bool m_AttackPressed;
         private IEventBus m_EventBus;
+        private Camera m_Camera;
     
         public CharacterView CharacterView => m_CharacterView;
 
         public SeparatePlayerController(CharacterView characterView)
         {
             m_CharacterView = characterView;
+            m_Camera= Camera.main;
 
             SetSystems();
+        }
+
+        ~SeparatePlayerController()
+        {
+            m_PlayerInputController.OnHold -= OnHold;
+            m_PlayerInputController.OnTap -= OnTap;
+            m_PlayerInputController.OnTouchMoved -= OnTouchMoved;
+            m_PlayerInputController.OnCancel -= OnTouchCancelled;
+        
+            m_CharacterView.OnCollision -= OnCollision;
+            m_CharacterView.OnDie -= OnDie;
         }
     
         private void SetSystems()
@@ -42,17 +55,6 @@ namespace Gameplay.Controllers
             m_CharacterView.OnDie += OnDie;
         }
 
-        public void Dispose()
-        {
-            m_PlayerInputController.OnHold -= OnHold;
-            m_PlayerInputController.OnTap -= OnTap;
-            m_PlayerInputController.OnTouchMoved -= OnTouchMoved;
-            m_PlayerInputController.OnCancel -= OnTouchCancelled;
-        
-            m_CharacterView.OnCollision -= OnCollision;
-            m_CharacterView.OnDie -= OnDie;
-        }
-
         public void Tick()
         {
         
@@ -60,15 +62,14 @@ namespace Gameplay.Controllers
     
         private void OnHold(Vector2 screenPos)
         {
-            m_CharacterView.UpdateDirection(screenPos);
-
-            if(screenPos == Vector2.zero) m_CharacterView.StopMove();
+            Vector2 worldPos = GetDirection(screenPos);
+            m_CharacterView.UpdateDirection(worldPos);
         }
 
         private void OnTouchMoved(Vector2 screenPos)
         {
-            m_CharacterView.UpdateDirection(screenPos);
-            if(screenPos == Vector2.zero) m_CharacterView.StopMove();
+            Vector2 worldPos = GetDirection(screenPos);
+            m_CharacterView.UpdateDirection(worldPos);
         }
 
         private void OnTouchCancelled()
@@ -78,8 +79,19 @@ namespace Gameplay.Controllers
         
         private void OnTap(Vector2 screenPos)
         {
-            m_CharacterView.UpdateDirection(screenPos, false);
+            Vector2 worldPos = GetDirection(screenPos);
+            m_CharacterView.UpdateDirection(worldPos, false);
             m_CharacterView.Attack();
+        }
+
+        private Vector2 GetDirection(Vector2 screenPos)
+        {
+            Vector3 worldPos = m_Camera.ScreenToWorldPoint(
+                new Vector3(screenPos.x, screenPos.y, Mathf.Abs(m_Camera.transform.position.z))
+            );
+            
+            Vector2 dir = new(worldPos.x - m_CharacterView.transform.position.x, worldPos.y - m_CharacterView.transform.position.y);
+            return dir;
         }
 
         private void OnCollision(GameObject obj)

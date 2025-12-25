@@ -89,7 +89,7 @@ namespace TowerDefence.Systems
 
         public Vector2 GetTouchPosition()
         {
-            return _input?.Game.TouchPosition?.ReadValue<Vector2>() ?? Vector2.zero;
+            return _input?.Game.TouchPosition.ReadValue<Vector2>() ?? Vector2.zero;
         }
 
         private void HandleTap(InputAction.CallbackContext context)

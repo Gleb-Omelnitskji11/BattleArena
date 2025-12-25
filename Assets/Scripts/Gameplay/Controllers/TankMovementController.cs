@@ -7,7 +7,6 @@ namespace Gameplay.Controllers
     {
         private readonly Transform m_Origin;
         private readonly MovementStats m_Stats;
-        private Camera m_Camera;
         private bool m_CanMove;
 
         public Vector2 MoveDirection { get; private set; }
@@ -16,36 +15,31 @@ namespace Gameplay.Controllers
         {
             m_Origin = origin;
             m_Stats = stats;
-            m_Camera = Camera.main;
         }
     
-        public void SetDirection(Vector2 screenPos, bool canMove = true)
+        public void SetDirection(Vector2 direction, bool canMove = true)
         {
-            Vector3 worldPos = m_Camera.ScreenToWorldPoint(
-                new Vector3(screenPos.x, screenPos.y, Mathf.Abs(m_Camera.transform.position.z))
-            );
+            if (direction == Vector2.zero) return;
     
-            Vector2 delta = worldPos - m_Origin.position;
-    
-            if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
+            if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
             {
-                if (delta.x > 0)
-                    SetDirection(Direction.Right);
+                if (direction.x > 0)
+                    ChooseDirection(Direction.Right);
                 else
-                    SetDirection(Direction.Left);
+                    ChooseDirection(Direction.Left);
             }
             else
             {
-                if (delta.y > 0)
-                    SetDirection(Direction.Up);
+                if (direction.y > 0)
+                    ChooseDirection(Direction.Up);
                 else
-                    SetDirection(Direction.Down);
+                    ChooseDirection(Direction.Down);
             }
         
             m_CanMove = canMove;
         }
     
-        private void SetDirection(Direction direction)
+        private void ChooseDirection(Direction direction)
         {
             switch (direction)
             {

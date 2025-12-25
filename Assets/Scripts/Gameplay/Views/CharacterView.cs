@@ -91,7 +91,7 @@ namespace Gameplay.Views
             OnCollision?.Invoke(collision.gameObject);
 
             string enemyTag = GetEnemyTeamID().ToString();
-            bool isCollisionWithEnemy = collision.gameObject.tag.Equals(enemyTag);
+            bool isCollisionWithEnemy = collision.gameObject.CompareTag(enemyTag);
             bool isProjectile = collision.gameObject.TryGetComponent<Projectile>(out Projectile projectile);
 
             if (isCollisionWithEnemy && isProjectile)

@@ -16,7 +16,6 @@ public class DirectionalTargetDetector : ITargetDetector
     private readonly List<CharacterView> AllEnemies = new List<CharacterView>();
     private CharacterModel CharacterModel => m_View.CharacterModel;
     private LevelProgressChecker m_LevelProgressChecker;
-    
 
     public DirectionalTargetDetector(Transform origin, CharacterView characterView)
     {
@@ -38,6 +37,7 @@ public class DirectionalTargetDetector : ITargetDetector
     public bool TryDetectTarget(out CharacterView target)
     {
         target = null;
+        bool detected = false;
 
         if (m_View.Direction == Vector2.zero)
             return false;
@@ -47,18 +47,19 @@ public class DirectionalTargetDetector : ITargetDetector
             if (!IsInFront(character))
                 continue;
 
-            if (!HasLineOfSight(character))
+            // if (!HasLineOfSight(character))
+            //     continue;
+
+            if (!detected)
+            {
+                target = character;
+                detected = true;
+            }
+            else if ((target.transform.position - m_Origin.position).magnitude
+                     <= (character.transform.position - m_Origin.position).magnitude)
                 continue;
 
-            if (target)
-            {
-                //if character2 further then character1
-                if ((target.transform.position - m_Origin.position).magnitude
-                    <= (character.transform.position - m_Origin.position).magnitude)
-                    continue;
-            }
-
-            Debug.Log("FindTarget");
+            Debug.Log("Target finded");
             target = character;
             return true;
         }
@@ -66,7 +67,7 @@ public class DirectionalTargetDetector : ITargetDetector
         return false;
     }
 
-    private bool IsEnemy(CharacterView candidate)
+    public bool IsEnemy(CharacterView candidate)
     {
         return candidate.TeamId != CharacterModel.TeamId && candidate.TeamId != TeamId.Neutral;
     }

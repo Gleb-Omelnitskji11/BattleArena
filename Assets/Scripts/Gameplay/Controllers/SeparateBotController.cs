@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Gameplay.Models;
 using Gameplay.Views;
 using UnityEngine;
 
 namespace Gameplay.Controllers
 {
-    public class SeparateBotController : ICharacterController, IDisposable
+    public class SeparateBotController : ICharacterController
     {
         private readonly CharacterView m_CharacterView;
         private readonly ITargetDetector m_Detector;
@@ -15,40 +17,84 @@ namespace Gameplay.Controllers
         private Vector2 m_CurrentDirection;
         public CharacterView CharacterView => m_CharacterView;
 
+        private Action m_UpdateAction;
+        private bool m_HasTarget;
+        private const int MaxTimeInOneDirection = 10000;
+        private CancellationTokenSource m_EscapeCts;
+        private const int MaxEscapeAttempts = 3;
+
         public SeparateBotController(CharacterView view, ITargetDetector detector)
         {
             m_CharacterView = view;
             m_Detector = detector;
             view.OnDie += OnDie;
             view.OnCollision += OnCollision;
+            UpdatePatrol();
+        }
+
+        ~SeparateBotController()
+        {
+            m_CharacterView.StopMove();
+
+            m_CharacterView.OnCollision -= OnCollision;
+            m_CharacterView.OnDie -= OnDie;
         }
 
         public void Tick()
         {
-            if (m_Detector.TryDetectTarget(out var target))
+            m_UpdateAction();
+        }
+
+        private void UpdatePatrol()
+        {
+            m_CurrentDirection = GetRandomDirection();
+            m_CharacterView.UpdateDirection(m_CurrentDirection);
+            m_UpdateAction = Patrol;
+        }
+
+        private void Patrol()
+        {
+            if (!m_Detector.TryDetectTarget(out var target))
+                return;
+
+            m_CurrentTarget = target;
+            m_HasTarget = true;
+            m_UpdateAction = Pursuit;
+        }
+
+        private void Pursuit()
+        {
+            if (!m_HasTarget)
             {
-                m_CurrentTarget = target;
-                Debug.Log("Detected");
-                Vector2 dir = (m_CurrentTarget.transform.position - m_CharacterView.transform.position).normalized;
-            
-                dir = ClampToCardinal(dir);
-            
-                m_CharacterView.UpdateDirection(dir);
-            
-                if (IsTargetInFront(m_CharacterView.transform, m_CurrentDirection, m_CurrentTarget.transform))
-                {
-                    m_CharacterView.Attack();
-                }
-            }
-            else
-            {
+                m_CurrentTarget = null;
                 UpdatePatrol();
+                return;
+            }
+
+            Vector2 dir = (m_CurrentTarget.transform.position - m_CharacterView.transform.position).normalized;
+
+            dir = ClampToCardinal(dir);
+
+            m_CharacterView.UpdateDirection(dir);
+
+            if (IsTargetInFront(m_CharacterView.transform, m_CurrentDirection, m_CurrentTarget.transform))
+            {
+                m_CharacterView.Attack();
             }
         }
 
         public void UpdateTargets(List<SeparateBotController> allBots)
         {
             m_Detector.UpdateEnemies(allBots);
+
+            if (m_HasTarget)
+            {
+                if (!m_Detector.IsEnemy(m_CurrentTarget))
+                {
+                    m_HasTarget = false;
+                    UpdatePatrol();
+                }
+            }
         }
 
         private bool IsTargetInFront(Transform bot, Vector2 botForward, Transform target)
@@ -64,24 +110,70 @@ namespace Gameplay.Controllers
             return dot >= cosThreshold;
         }
 
-        private void UpdatePatrol()
+        private void OnCollision(GameObject obj)
         {
-            if (m_CurrentDirection == Vector2.zero)
+            if (obj.CompareTag(m_CharacterView.CharacterModel.TeamId.ToString())
+                || obj.CompareTag(TeamId.Neutral.ToString()))
             {
-                m_CurrentDirection = GetRandomDirection();
+                StartEscape();
+            }
+        }
+
+        private async void StartEscape()
+        {
+            CancelEscape();
+
+            m_EscapeCts = new CancellationTokenSource();
+            CancellationToken token = m_EscapeCts.Token;
+
+            Vector2 originalDir = m_CurrentDirection;
+
+            for (int attempt = 0; attempt < MaxEscapeAttempts; attempt++)
+            {
+                Vector2 newDir = GetEscapeDirection();
+                m_CurrentDirection = newDir;
+                m_CharacterView.UpdateDirection(newDir);
+
+                try
+                {
+                    await Task.Delay((int)(MaxTimeInOneDirection * 1000), token);
+                }
+                catch (TaskCanceledException)
+                {
+                    return;
+                }
+
+                if (m_CurrentDirection != originalDir)
+                    return;
             }
 
+            m_CurrentDirection = GetRandomDirection();
             m_CharacterView.UpdateDirection(m_CurrentDirection);
         }
 
-        private void OnCollision(GameObject obj)
+        private Vector2 GetEscapeDirection()
         {
-            if (obj.tag.Equals(m_CharacterView.CharacterModel.TeamId.ToString())
-                || obj.tag.Equals(TeamId.Neutral.ToString()))
+            if (m_CurrentDirection == Vector2.up || m_CurrentDirection == Vector2.down)
             {
-                m_CurrentDirection = GetRandomDirection();
-                m_CharacterView.UpdateDirection(m_CurrentDirection);
+                return UnityEngine.Random.value > 0.5f ? Vector2.left : Vector2.right;
             }
+
+            if (m_CurrentDirection == Vector2.left || m_CurrentDirection == Vector2.right)
+            {
+                return UnityEngine.Random.value > 0.5f ? Vector2.up : Vector2.down;
+            }
+
+            return GetRandomDirection();
+        }
+
+        private void CancelEscape()
+        {
+            if (m_EscapeCts == null)
+                return;
+
+            m_EscapeCts.Cancel();
+            m_EscapeCts.Dispose();
+            m_EscapeCts = null;
         }
 
         private Vector2 GetRandomDirection()
@@ -104,15 +196,6 @@ namespace Gameplay.Controllers
                 return new Vector2(Mathf.Sign(dir.x), 0);
 
             return new Vector2(0, Mathf.Sign(dir.y));
-        }
-
-        public void Dispose()
-        {
-            Debug.Log("Disposing");
-            m_CharacterView.StopMove();
-
-            m_CharacterView.OnCollision -= OnCollision;
-            m_CharacterView.OnDie -= OnDie;
         }
 
         private void OnDie()
