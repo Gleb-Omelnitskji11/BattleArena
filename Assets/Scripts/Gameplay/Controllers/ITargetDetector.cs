@@ -6,7 +6,7 @@ namespace Gameplay.Controllers
     public interface ITargetDetector
     {
         bool TryDetectTarget(out CharacterView target);
-        void UpdateEnemies(List<SeparateBotController> allBots);
+        void UpdateEnemies(List<CharacterView> allBots);
         bool IsEnemy(CharacterView candidate);
     }
 }

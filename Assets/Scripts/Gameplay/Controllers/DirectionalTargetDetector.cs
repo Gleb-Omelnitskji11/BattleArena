@@ -15,7 +15,6 @@ public class DirectionalTargetDetector : ITargetDetector
 
     private readonly List<CharacterView> AllEnemies = new List<CharacterView>();
     private CharacterModel CharacterModel => m_View.CharacterModel;
-    private LevelProgressChecker m_LevelProgressChecker;
 
     public DirectionalTargetDetector(Transform origin, CharacterView characterView)
     {
@@ -23,14 +22,15 @@ public class DirectionalTargetDetector : ITargetDetector
         m_View = characterView;
     }
 
-    public void UpdateEnemies(List<SeparateBotController> allBots)
+    public void UpdateEnemies(List<CharacterView> allBots)
     {
+        AllEnemies.Clear();
         foreach (var character in allBots)
         {
-            if (!IsEnemy(character.CharacterView))
+            if (!IsEnemy(character))
                 continue;
 
-            AllEnemies.Add(character.CharacterView);
+            AllEnemies.Add(character);
         }
     }
 
@@ -59,7 +59,6 @@ public class DirectionalTargetDetector : ITargetDetector
                      <= (character.transform.position - m_Origin.position).magnitude)
                 continue;
 
-            Debug.Log("Target finded");
             target = character;
             return true;
         }

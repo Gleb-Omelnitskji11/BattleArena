@@ -83,7 +83,7 @@ namespace Gameplay.Controllers
             }
         }
 
-        public void UpdateTargets(List<SeparateBotController> allBots)
+        public void UpdateTargets(List<CharacterView> allBots)
         {
             m_Detector.UpdateEnemies(allBots);
 
@@ -105,7 +105,7 @@ namespace Gameplay.Controllers
             Vector2 toTarget = ((Vector2)target.position - (Vector2)bot.position).normalized;
 
             float dot = Vector2.Dot(botForward, toTarget);
-            float cosThreshold = Mathf.Cos(0.9f * 0.5f * Mathf.Deg2Rad);
+            float cosThreshold = Mathf.Cos(90f * 0.5f * Mathf.Deg2Rad); ///Todo make vigion from config
 
             return dot >= cosThreshold;
         }

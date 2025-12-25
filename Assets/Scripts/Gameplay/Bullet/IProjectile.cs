@@ -7,5 +7,6 @@ namespace Gameplay.Bullet
         public void Init(IObjectPooler pooler, string poolKey);
 
         void Activate(int damage, float bulletSpeed);
+        void Deactivate();
     }
 }

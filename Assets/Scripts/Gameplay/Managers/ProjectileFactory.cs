@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Gameplay.Bullet;
 using Gameplay.ConfigScripts;
 using Gameplay.Models;
@@ -12,6 +13,8 @@ namespace Gameplay.Managers
     {
         private readonly IObjectPooler m_Pooler;
         private readonly ProjectileConfig m_ProjectileConfig;
+        
+        private readonly List<IProjectile> m_Projectiles = new List<IProjectile>();
 
         public ProjectileFactory(IObjectPooler pooler, IConfigProvider configProvider)
         {
@@ -29,8 +32,28 @@ namespace Gameplay.Managers
                 string key = GetKey(type);
 
                 m_Pooler.CreatePool(key, factory: () => GameObject.Instantiate(model.ProjectilePrefab),
-                    onGet: p => p.gameObject.SetActive(true), onRelease: p => p.gameObject.SetActive(false),
+                    onGet: OnGetFromPool, onRelease: OnRealiseToPool,
                     prewarmCount: model.PrewarmCount);
+            }
+        }
+
+        private void OnGetFromPool(Projectile projectile)
+        {
+            projectile.gameObject.SetActive(true);
+            m_Projectiles.Add(projectile);
+        }
+        
+        private void OnRealiseToPool(Projectile projectile)
+        {
+            projectile.gameObject.SetActive(false);
+            m_Projectiles.Remove(projectile);
+        }
+
+        public void RealiseAll()
+        {
+            foreach (var projectile in m_Projectiles)
+            {
+                projectile.Deactivate();
             }
         }
 

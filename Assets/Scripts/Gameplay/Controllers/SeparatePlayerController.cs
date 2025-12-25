@@ -101,6 +101,7 @@ namespace Gameplay.Controllers
 
         private void OnDie()
         {
+            Debug.Log("You are Dead");
             m_EventBus.Publish(new GameOverEvent());
         }
     }

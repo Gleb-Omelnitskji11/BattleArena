@@ -20,6 +20,7 @@ namespace Gameplay.Managers
         private LevelConfig m_LevelConfig;
 
         public readonly List<SeparateBotController> AllBots = new List<SeparateBotController>();
+        public readonly List<CharacterView> AllViews = new List<CharacterView>();
         public SeparatePlayerController Player { get; private set; }
 
         private void Awake()
@@ -81,6 +82,7 @@ namespace Gameplay.Managers
                 {
                     SeparateBotController bot = m_UnitSpawner.SpawnBot(model.RaceType, true);
                     AllBots.Add(bot);
+                    AllViews.Add(bot.CharacterView);
                     bot.CharacterView.OnDie += CheckGameOver;
                 }
             }
@@ -91,8 +93,16 @@ namespace Gameplay.Managers
                 {
                     SeparateBotController bot = m_UnitSpawner.SpawnBot(model.RaceType, false);
                     AllBots.Add(bot);
+                    AllViews.Add(bot.CharacterView);
                     bot.CharacterView.OnDie += CheckGameOver;
                 }
+            }
+
+            AllViews.Add(Player.CharacterView);
+
+            foreach (var bot in AllBots)
+            {
+                bot.UpdateTargets(AllViews);
             }
         }
 
@@ -100,9 +110,9 @@ namespace Gameplay.Managers
         {
             foreach (var bot in AllBots)
             {
-                bot.UpdateTargets(AllBots);
+                bot.UpdateTargets(AllViews);
 
-                if (bot.CharacterView.TeamId != Player.CharacterView.TeamId)
+                if (bot.CharacterView.TeamId != Player.CharacterView.TeamId && bot.CharacterView.gameObject.activeInHierarchy)
                     return;
             }
 
