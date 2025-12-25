@@ -22,7 +22,8 @@ namespace Gameplay.ConfigScripts
     public class ProjectileConfigModel
     {
         public Projectile ProjectilePrefab;
-        public float Speed;
         public ProjectileType ProjectileType;
+        public float Speed;
+        public int PrewarmCount = 5;
     }
 }

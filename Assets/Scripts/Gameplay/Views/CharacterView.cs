@@ -1,6 +1,7 @@
 using System;
 using Gameplay.Bullet;
 using Gameplay.Controllers;
+using Gameplay.Managers;
 using Gameplay.Models;
 using UnityEngine;
 
@@ -24,13 +25,13 @@ namespace Gameplay.Views
 
         private bool m_Active;
 
-        public void Init(CharacterModel model)
+        public void Init(CharacterModel model, IProjectileFactory projectileFactory)
         {
             CharacterModel = model;
 
             m_MovementController = new TankMovementController(transform, model.Movement);
 
-            m_AttackExecutor = new SimpleAttackExecutor(m_ProjectileSpawnPoint, model.AttackComponent, model.Damage);
+            m_AttackExecutor = new SimpleAttackExecutor(m_ProjectileSpawnPoint, model.AttackComponent, model.Damage, projectileFactory);
 
             model.Health.OnDeath += HandleDeath;
         }

@@ -26,8 +26,7 @@ namespace Gameplay.Managers
                     m_ProjectileConfig = projectileConfig;
                 }
             }
-            
-            
+
             Instance = this;
         }
 
@@ -51,7 +50,7 @@ namespace Gameplay.Managers
             projectile.tag = teamId;
 
             var model = m_ProjectileConfig.GetCharacterModel(projectileType);
-            
+
             projectile.gameObject.SetActive(true);
             projectile.Activate(damage, model.Speed);
         }

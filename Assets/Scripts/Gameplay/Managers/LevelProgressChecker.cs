@@ -42,6 +42,8 @@ namespace Gameplay.Managers
         private void OnDestroy()
         {
             ServiceLocator.Instance?.Unregister<LevelProgressChecker>();
+
+            m_UnitSpawner.Clear();
             Player.CharacterView.OnDie -= GameOver;
         }
 
@@ -99,6 +101,7 @@ namespace Gameplay.Managers
             foreach (var bot in AllBots)
             {
                 bot.UpdateTargets(AllBots);
+
                 if (bot.CharacterView.TeamId != Player.CharacterView.TeamId)
                     return;
             }
@@ -119,7 +122,6 @@ namespace Gameplay.Managers
             }
 
             Player?.CharacterView.gameObject.SetActive(false);
-            BulletSpawner.Instance.Clear();
         }
     }
 }

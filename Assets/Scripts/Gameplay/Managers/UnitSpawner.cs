@@ -5,6 +5,7 @@ using Gameplay.Models;
 using Gameplay.Views;
 using TowerDefence.Core;
 using TowerDefence.Data;
+using TowerDefence.Systems;
 using UnityEngine;
 
 namespace Gameplay.Managers
@@ -17,17 +18,37 @@ namespace Gameplay.Managers
         [SerializeField]
         private LevelProgressChecker m_LevelProgressChecker;
 
+        private IProjectileFactory m_ProjectileFactory;
+
         private CharactersConfig m_CharactersConfig;
+        private bool m_Initialized;
 
         private void Awake()
         {
-            if (Services.TryGet<IConfigProvider>(out IConfigProvider configProvider))
+            Init();
+        }
+
+        public void Init()
+        {
+            if (m_Initialized)
+                return;
+
+            m_Initialized = true;
+            IConfigProvider configProvider = Services.Get<IConfigProvider>();
+
+            if (configProvider.TryGet<CharactersConfig>("CharactersConfig", out CharactersConfig charactersConfig))
             {
-                if (configProvider.TryGet<CharactersConfig>("CharactersConfig", out CharactersConfig charactersConfig))
-                {
-                    m_CharactersConfig = charactersConfig;
-                }
+                m_CharactersConfig = charactersConfig;
             }
+
+            IObjectPooler pooler = Services.Get<IObjectPooler>();
+            pooler.Init();
+            m_ProjectileFactory = new ProjectileFactory(pooler, configProvider);
+        }
+
+        public void Clear()
+        {
+            m_ProjectileFactory.Clear();
         }
 
         public SeparatePlayerController SpawnPlayer(RaceType type)
@@ -77,7 +98,7 @@ namespace Gameplay.Managers
                 attackComponent, movementStats, characterConfigModel.Damage);
 
             CharacterView newUnit = Instantiate(characterConfigModel.CharacterPrefab);
-            newUnit.Init(characterModel);
+            newUnit.Init(characterModel, m_ProjectileFactory);
             return newUnit;
         }
 
