@@ -22,7 +22,7 @@ namespace Gameplay.Managers
             IProjectileFactory projectileFactory)
         {
             m_Pooler = pooler;
-            configProvider.TryGet("ProjectilesConfig", out m_CharactersConfig);
+            configProvider.TryGet("CharactersConfig", out m_CharactersConfig);
             m_ProjectileFactory = projectileFactory;
             InitPools();
         }
@@ -31,7 +31,6 @@ namespace Gameplay.Managers
         {
             foreach (RaceType type in Enum.GetValues(typeof(RaceType)))
             {
-                CharacterConfigModel model = m_CharactersConfig.GetCharacterModel(type);
                 string key = GetKey(type);
 
                 Func<CharacterView> creator = GetCreatorFunc(type);
@@ -61,13 +60,13 @@ namespace Gameplay.Managers
 
         private void OnRealiseToPool(CharacterView character)
         {
-            character.gameObject.SetActive(false);
             m_Characters.Remove(character);
         }
 
         public void RealiseAll()
         {
-            foreach (var character in m_Characters)
+            List<CharacterView> characters = new List<CharacterView>(m_Characters);
+            foreach (var character in characters)
             {
                 character.Deactivate();
             }

@@ -1,3 +1,4 @@
+using System;
 using TowerDefence.Core;
 using TowerDefence.Game;
 using UnityEngine;
@@ -23,11 +24,17 @@ namespace TowerDefence.UI
             m_QuitButton.onClick.AddListener(OnQuitClicked);
         }
 
+        private void OnEnable()
+        {
+            m_ResumeButton.enabled = true;
+        }
+
         private void OnResumeClicked()
         {
+            m_ResumeButton.enabled = false;
             m_EventBus.Publish(new ResumeGameRequestedEvent());
         }
-        
+
         private void OnQuitClicked()
         {
             m_EventBus.Publish(new ReturnToMenuRequestedEvent());

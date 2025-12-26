@@ -2,7 +2,7 @@ using Gameplay.Controllers;
 
 namespace Gameplay.Models
 {
-    public class CharacterModel : IComponent
+    public class CharacterModel
     {
         public TeamId TeamId { get; private set; }
         public RaceType Race { get; }

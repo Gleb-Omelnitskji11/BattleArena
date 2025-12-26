@@ -51,7 +51,8 @@ namespace Gameplay.Managers
 
         public void RealiseAll()
         {
-            foreach (var projectile in m_Projectiles)
+            List<IProjectile> projectiles = new List<IProjectile>(m_Projectiles);
+            foreach (var projectile in projectiles)
             {
                 projectile.Deactivate();
             }

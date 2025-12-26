@@ -60,10 +60,9 @@ public class DirectionalTargetDetector : ITargetDetector
                 continue;
 
             target = character;
-            return true;
         }
 
-        return false;
+        return detected;
     }
 
     public bool IsEnemy(CharacterView candidate)

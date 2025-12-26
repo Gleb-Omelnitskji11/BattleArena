@@ -11,7 +11,6 @@ namespace Gameplay.Controllers
     {
         private CharacterView m_CharacterView;
         private IInputService m_PlayerInputController;
-        private IEventBus m_EventBus;
         private Camera m_Camera;
 
         public CharacterView CharacterView => m_CharacterView;
@@ -32,7 +31,6 @@ namespace Gameplay.Controllers
             m_PlayerInputController.OnCancel -= OnTouchCancelled;
 
             m_CharacterView.OnCollision -= OnCollision;
-            m_CharacterView.OnDie -= OnDie;
         }
 
         public void ResetData()
@@ -42,8 +40,6 @@ namespace Gameplay.Controllers
 
         private void SetSystems()
         {
-            m_EventBus = Services.Get<IEventBus>();
-
             if (Services.TryGet<IInputService>(out var inputService))
             {
                 m_PlayerInputController = inputService;
@@ -55,8 +51,8 @@ namespace Gameplay.Controllers
             m_PlayerInputController.OnCancel += OnTouchCancelled;
 
             m_CharacterView.OnCollision += OnCollision;
-            m_CharacterView.OnDie += OnDie;
         }
+        
 
         public void Tick()
         {
@@ -100,12 +96,6 @@ namespace Gameplay.Controllers
         private void OnCollision(GameObject obj)
         {
             m_CharacterView.StopMove();
-        }
-
-        private void OnDie()
-        {
-            Debug.Log("You are Dead");
-            m_EventBus.Publish(new GameOverEvent());
         }
     }
 }

@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using Gameplay.ConfigScripts;
 using Gameplay.Controllers;
-using Gameplay.Models;
 using Gameplay.Views;
 using TowerDefence.Core;
 using TowerDefence.Data;
@@ -11,17 +8,17 @@ using UnityEngine;
 
 namespace Gameplay.Managers
 {
-    public class LevelProgressChecker : MonoBehaviour, IService ///todo sepate levelLoader
+    public class LevelProgressChecker : MonoBehaviour, IService
     {
+        [SerializeField]
+        private FieldView m_Field;
+
         [SerializeField]
         private UnitSpawner m_UnitSpawner;
 
         private IEventBus m_EventBus;
         private LevelConfig m_LevelConfig;
-
-        public readonly List<SeparateBotController> AllBots = new List<SeparateBotController>();
-        public readonly List<CharacterView> AllViews = new List<CharacterView>();
-        public SeparatePlayerController Player { get; private set; }
+        private LevelLoader m_LevelLoader;
 
         private void Awake()
         {
@@ -44,109 +41,87 @@ namespace Gameplay.Managers
         {
             ServiceLocator.Instance?.Unregister<LevelProgressChecker>();
 
-            m_UnitSpawner.RealiseAll();
-            Player.CharacterView.OnDie -= GameOver;
+            if (m_LevelLoader?.Player != null)
+            {
+                m_LevelLoader.Player.CharacterView.OnDie -= OnPlayerDie;
+            }
+
+            //m_LevelLoader?.ClearLevel();
         }
 
         public void Init()
         {
             m_EventBus = Services.Get<IEventBus>();
+            m_LevelLoader = new LevelLoader(m_UnitSpawner, m_Field);
+
             ServiceLocator.Instance.Register(GetType(), this);
         }
 
         public void NextLevel()
         {
-            LevelModel levelModel = m_LevelConfig.GetDefaultLevel();
-            LoadLevel(levelModel);
+            var levelModel = m_LevelConfig.GetDefaultLevel();
+            m_LevelLoader.LoadLevel(levelModel);
+
+            SubscribeToDeaths();
         }
 
-        private void LoadLevel(LevelModel levelModel)
+        private void SubscribeToDeaths()
         {
-            ClearLevel();
-            SpawnPlayer(levelModel.PlayerRace);
-            SpawnBots(levelModel.Enemies, levelModel.Allies);
+            foreach (var bot in m_LevelLoader.AllBots)
+            {
+                bot.CharacterView.OnDie += OnBotDie;
+            }
+
+            m_LevelLoader.Player.CharacterView.OnDie += OnPlayerDie;
         }
 
-        private void SpawnPlayer(RaceType playerRace)
+        private void OnBotDie(CharacterView view)
         {
-            if (Player == null) Player = m_UnitSpawner.SpawnPlayer(playerRace);
+            (view.CharacterController as SeparateBotController).ChangeTeam();
 
-            else if (Player.CharacterView.CharacterModel.Race != playerRace)
-            {
-                Destroy(Player.CharacterView);
-            }
-
-            m_UnitSpawner.Shuffle(Player.CharacterView.transform, true);
-            Player.CharacterView.OnDie += GameOver;
-            Player.CharacterView.gameObject.SetActive(true);
+            if (CheckGameOver())
+                GameOver(true);
+            else
+                m_LevelLoader.UpdateTargets();
         }
 
-        private void SpawnBots(BotLevelModel[] enemyLevelModels, BotLevelModel[] alliesLevelModels)
+        private bool CheckGameOver()
         {
-            AllViews.Clear();
-            AllBots.Clear();
-
-            foreach (var model in enemyLevelModels)
+            foreach (var bot in m_LevelLoader.AllBots)
             {
-                for (int i = 0; i < model.Amount; i++)
-                {
-                    SeparateBotController bot = m_UnitSpawner.SpawnBot(model.RaceType, true);
-                    AllBots.Add(bot);
-                    AllViews.Add(bot.CharacterView);
-                    bot.CharacterView.OnDie += CheckGameOver;
-                }
-            }
-
-            foreach (var model in alliesLevelModels)
-            {
-                for (int i = 0; i < model.Amount; i++)
-                {
-                    SeparateBotController bot = m_UnitSpawner.SpawnBot(model.RaceType, false);
-                    AllBots.Add(bot);
-                    AllViews.Add(bot.CharacterView);
-                    bot.CharacterView.OnDie += CheckGameOver;
-                }
-            }
-
-            AllViews.Add(Player.CharacterView);
-
-            foreach (var bot in AllBots)
-            {
-                bot.UpdateTargets(AllViews);
-            }
-        }
-
-        private void CheckGameOver()
-        {
-            foreach (var bot in AllBots)
-            {
-                bot.UpdateTargets(AllViews);
-
-                if (bot.CharacterView.TeamId != Player.CharacterView.TeamId
+                if (bot.CharacterView.TeamId != m_LevelLoader.Player.CharacterView.TeamId
                     && bot.CharacterView.gameObject.activeInHierarchy)
-                    return;
+                {
+                    bot.UpdateTargets(m_LevelLoader.AllViews);
+                    return false;
+                }
             }
 
-            GameOver();
+            return true;
         }
 
-        private void GameOver()
+        private void OnPlayerDie(CharacterView view)
         {
-            Player.CharacterView.OnDie -= GameOver;
-            m_EventBus.Publish(new GameOverEvent());
+            GameOver(false);
         }
 
-        private void ClearLevel()
+        private void GameOver(bool isWin)
         {
-            m_UnitSpawner.RealiseAll();
-
-            for (int i = 0; i < AllBots.Count; i++)
+            if (isWin)
             {
-                AllBots[i].CharacterView.gameObject.SetActive(false);
-                Destroy(AllBots[i].CharacterView.gameObject);
+                Debug.Log("You win");
+            }
+            else
+            {
+                Debug.Log("You are Dead");
             }
 
-            Player?.CharacterView.gameObject.SetActive(false);
+            foreach (var bot in m_LevelLoader.AllBots)
+            {
+                bot.CharacterView.OnDie -= OnBotDie;
+            }
+            m_LevelLoader.Player.CharacterView.OnDie -= OnPlayerDie;
+            m_EventBus.Publish(new GameOverEvent());
         }
     }
 }

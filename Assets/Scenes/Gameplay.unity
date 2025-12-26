@@ -467,8 +467,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dec13980748a3a45b47436f69b79ec1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitSpawner
-  m_Field: {fileID: 1805231344}
-  m_LevelProgressChecker: {fileID: 1749506495}
 --- !u!4 &1527589197
 Transform:
   m_ObjectHideFlags: 0
@@ -513,6 +511,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5666086eb0920d2488f0f55630510495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelProgressChecker
+  m_Field: {fileID: 1805231344}
   m_UnitSpawner: {fileID: 1527589196}
 --- !u!4 &1749506496
 Transform:

@@ -21,15 +21,13 @@ namespace Gameplay.Controllers
         private CancellationTokenSource m_EscapeCts;
         private const int MaxTimeInOneDirection = 10000;
         private const int MaxEscapeAttempts = 3;
-        
-        
+
         private Vector2 m_CurrentDirection;
 
         public void SetData(CharacterView view, ITargetDetector detector)
         {
             m_CharacterView = view;
             m_Detector = detector;
-            view.OnDie += OnDie;
             view.OnCollision += OnCollision;
             UpdatePatrol();
         }
@@ -39,7 +37,6 @@ namespace Gameplay.Controllers
             m_CharacterView.StopMove();
 
             m_CharacterView.OnCollision -= OnCollision;
-            m_CharacterView.OnDie -= OnDie;
         }
 
         public void ResetData()
@@ -82,16 +79,28 @@ namespace Gameplay.Controllers
                 return;
             }
 
-            Vector2 dir = (m_CurrentTarget.transform.position - m_CharacterView.transform.position).normalized;
-
-            dir = ClampToCardinal(dir);
-
-            m_CharacterView.UpdateDirection(dir);
-
             if (IsTargetInFront(m_CharacterView.transform, m_CurrentDirection, m_CurrentTarget.transform))
             {
                 m_CharacterView.Attack();
+                m_CharacterView.StopMove();
             }
+            else
+            {
+                Vector2 dir = (m_CurrentTarget.transform.position - m_CharacterView.transform.position).normalized;
+
+                dir = ClampToCardinal(dir);
+
+                m_CharacterView.UpdateDirection(dir);
+            }
+        }
+
+        public void ChangeTeam()
+        {
+            int restore = (int)(m_CharacterView.CharacterModel.Health.MaxHp * 0.6f);
+            m_CharacterView.CharacterModel.Health.Restore(restore);
+
+            TeamId enemyId = m_CharacterView.GetEnemyTeamID();
+            m_CharacterView.SetTeam(enemyId, false);
         }
 
         public void UpdateTargets(List<CharacterView> allBots)
@@ -147,7 +156,7 @@ namespace Gameplay.Controllers
 
                 try
                 {
-                    await Task.Delay((int)(MaxTimeInOneDirection * 1000), token);
+                    await Task.Delay((MaxTimeInOneDirection), token);
                 }
                 catch (TaskCanceledException)
                 {
@@ -207,15 +216,6 @@ namespace Gameplay.Controllers
                 return new Vector2(Mathf.Sign(dir.x), 0);
 
             return new Vector2(0, Mathf.Sign(dir.y));
-        }
-
-        private void OnDie()
-        {
-            int restore = (int)(m_CharacterView.CharacterModel.Health.MaxHp * 0.6f);
-            m_CharacterView.CharacterModel.Health.Restore(restore);
-
-            TeamId enemyId = m_CharacterView.GetEnemyTeamID();
-            m_CharacterView.SetTeam(enemyId, false);
         }
     }
 }

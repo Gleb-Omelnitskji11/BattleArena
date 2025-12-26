@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Gameplay.Views
 {
-    public class CharacterView : MonoBehaviour, IPoolable
+    public class CharacterView : MonoBehaviour
     {
         [SerializeField]
         private SpriteRenderer m_TeamHighlight;
@@ -29,7 +29,6 @@ namespace Gameplay.Views
         public Vector2 Direction => m_MovementController.MoveDirection;
 
         private bool m_Active;
-        
 
         public void SetPoolableData(IObjectPooler pooler, string poolKey)
         {
@@ -51,7 +50,9 @@ namespace Gameplay.Views
 
         public void Reset()
         {
-            throw new NotImplementedException();
+            CharacterModel.ResetData();
+            m_MovementController.ResetData();
+            m_AttackExecutor.ResetData();
         }
 
         public void SetTeam(TeamId teamId, bool isPlayer)
@@ -63,9 +64,13 @@ namespace Gameplay.Views
                 isPlayer ? Color.green : CharacterModel.TeamId == TeamId.Red ? Color.red : Color.blue;
         }
 
-        public void Activate(ICharacterController controller)
+        public void ActivateController(ICharacterController controller)
         {
             CharacterController = controller;
+        }
+
+        public void Activate()
+        {
             m_Active = true;
             gameObject.SetActive(true);
         }
@@ -77,10 +82,11 @@ namespace Gameplay.Views
             CharacterController.Tick();
             m_MovementController.Move(Time.deltaTime);
         }
+
         public void Deactivate()
         {
             StopMove();
-            m_Pooler?.Release(m_PoolKey, this);
+            m_Pooler.Release(m_PoolKey, this);
             m_Active = false;
             gameObject.SetActive(false);
         }
@@ -107,18 +113,28 @@ namespace Gameplay.Views
 
         private void HandleDeath()
         {
-            OnDie?.Invoke();
+            OnDie?.Invoke(this);
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
+            OperateCollision(collision.gameObject);
+        }
+
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            OperateCollision(collision.gameObject);
+        }
+
+        private void OperateCollision(GameObject other)
+        {
             if (!m_Active) return;
 
-            OnCollision?.Invoke(collision.gameObject);
+            OnCollision?.Invoke(other);
 
             string enemyTag = GetEnemyTeamID().ToString();
-            bool isCollisionWithEnemy = collision.gameObject.CompareTag(enemyTag);
-            bool isProjectile = collision.gameObject.TryGetComponent<Projectile>(out Projectile projectile);
+            bool isCollisionWithEnemy = other.CompareTag(enemyTag);
+            bool isProjectile = other.TryGetComponent<Projectile>(out Projectile projectile);
 
             if (isCollisionWithEnemy && isProjectile)
             {
@@ -135,6 +151,6 @@ namespace Gameplay.Views
         }
 
         public event Action<GameObject> OnCollision;
-        public event Action OnDie;
+        public event Action<CharacterView> OnDie;
     }
 }
