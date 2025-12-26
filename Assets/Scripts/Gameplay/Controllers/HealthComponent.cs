@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Gameplay.Controllers
 {
-    public class HealthComponent
+    public class HealthComponent : IComponent
     {
         public int MaxHp { get; }
         public int CurrentHp { get; private set; }
@@ -27,6 +27,11 @@ namespace Gameplay.Controllers
         public void Restore(int value)
         {
             CurrentHp = Mathf.Min(MaxHp, value);
+        }
+
+        public void ResetData()
+        {
+            CurrentHp = MaxHp;
         }
     }
 }

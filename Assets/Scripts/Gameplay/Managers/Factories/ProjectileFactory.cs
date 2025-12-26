@@ -67,7 +67,7 @@ namespace Gameplay.Managers
             projectile.tag = teamId;
 
             var model = m_ProjectileConfig.GetCharacterModel(type);
-            projectile.Init(m_Pooler, key);
+            projectile.SetPoolableData(m_Pooler, key);
             projectile.Activate(damage, model.Speed);
 
             return projectile;

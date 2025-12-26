@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Gameplay.Controllers
 {
-    public interface IMovementController
+    public interface IMovementController : IComponent
     {
         Vector2 MoveDirection { get; }
         void SetDirection(Vector2 direction, bool canMove = true);

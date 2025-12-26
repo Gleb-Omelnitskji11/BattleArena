@@ -13,7 +13,7 @@ namespace Gameplay.Bullet
 
         public int Damage { get; private set; }
 
-        public void Init(IObjectPooler pooler, string poolKey)
+        public void SetPoolableData(IObjectPooler pooler, string poolKey)
         {
             m_Pooler = pooler;
             m_PoolKey = poolKey;

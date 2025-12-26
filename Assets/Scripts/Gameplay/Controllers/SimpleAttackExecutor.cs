@@ -28,5 +28,10 @@ namespace Gameplay.Controllers
             m_ProjectileFactory.Spawn(m_ProjectileType, m_StartPoint, tag, m_Damage);
             m_AttackComponent.RegisterAttack(Time.time);
         }
+
+        public void ResetData()
+        {
+            
+        }
     }
 }

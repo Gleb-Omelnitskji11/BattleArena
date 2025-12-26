@@ -3,11 +3,12 @@ using Gameplay.Bullet;
 using Gameplay.Controllers;
 using Gameplay.Managers;
 using Gameplay.Models;
+using TowerDefence.Systems;
 using UnityEngine;
 
 namespace Gameplay.Views
 {
-    public class CharacterView : MonoBehaviour
+    public class CharacterView : MonoBehaviour, IPoolable
     {
         [SerializeField]
         private SpriteRenderer m_TeamHighlight;
@@ -16,14 +17,25 @@ namespace Gameplay.Views
         private Transform m_ProjectileSpawnPoint;
 
         public CharacterModel CharacterModel { get; private set; }
+        public ICharacterController CharacterController { get; private set; }
 
         private IMovementController m_MovementController;
         private IAttackExecutor m_AttackExecutor;
-        private ICharacterController m_Controller;
+
+        private IObjectPooler m_Pooler;
+        private string m_PoolKey;
+
         public TeamId TeamId => CharacterModel.TeamId;
         public Vector2 Direction => m_MovementController.MoveDirection;
 
         private bool m_Active;
+        
+
+        public void SetPoolableData(IObjectPooler pooler, string poolKey)
+        {
+            m_Pooler = pooler;
+            m_PoolKey = poolKey;
+        }
 
         public void Init(CharacterModel model, IProjectileFactory projectileFactory)
         {
@@ -31,9 +43,15 @@ namespace Gameplay.Views
 
             m_MovementController = new TankMovementController(transform, model.Movement);
 
-            m_AttackExecutor = new SimpleAttackExecutor(m_ProjectileSpawnPoint, model.AttackComponent, model.Damage, projectileFactory);
+            m_AttackExecutor = new SimpleAttackExecutor(m_ProjectileSpawnPoint, model.AttackComponent, model.Damage,
+                projectileFactory);
 
             model.Health.OnDeath += HandleDeath;
+        }
+
+        public void Reset()
+        {
+            throw new NotImplementedException();
         }
 
         public void SetTeam(TeamId teamId, bool isPlayer)
@@ -45,18 +63,26 @@ namespace Gameplay.Views
                 isPlayer ? Color.green : CharacterModel.TeamId == TeamId.Red ? Color.red : Color.blue;
         }
 
-        public void SetController(ICharacterController controller)
+        public void Activate(ICharacterController controller)
         {
-            m_Controller = controller;
+            CharacterController = controller;
             m_Active = true;
+            gameObject.SetActive(true);
         }
 
         private void Update()
         {
             if (!m_Active) return;
 
-            m_Controller.Tick();
+            CharacterController.Tick();
             m_MovementController.Move(Time.deltaTime);
+        }
+        public void Deactivate()
+        {
+            StopMove();
+            m_Pooler?.Release(m_PoolKey, this);
+            m_Active = false;
+            gameObject.SetActive(false);
         }
 
         public void StopMove()

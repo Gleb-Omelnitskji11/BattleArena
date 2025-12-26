@@ -2,11 +2,8 @@ using TowerDefence.Systems;
 
 namespace Gameplay.Bullet
 {
-    public interface IProjectile
+    public interface IProjectile : IPoolable
     {
-        public void Init(IObjectPooler pooler, string poolKey);
-
         void Activate(int damage, float bulletSpeed);
-        void Deactivate();
     }
 }

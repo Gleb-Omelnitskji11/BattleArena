@@ -1,6 +1,6 @@
 namespace Gameplay.Controllers
 {
-    public interface IAttackExecutor
+    public interface IAttackExecutor : IComponent
     {
         void TryAttack(string tag);
     }

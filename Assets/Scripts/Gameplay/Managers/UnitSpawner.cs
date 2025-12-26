@@ -19,8 +19,7 @@ namespace Gameplay.Managers
         private LevelProgressChecker m_LevelProgressChecker;
 
         private IProjectileFactory m_ProjectileFactory;
-
-        private CharactersConfig m_CharactersConfig;
+        private ICharactersFactory m_CharactersFactory;
         private bool m_Initialized;
 
         private void Awake()
@@ -28,7 +27,7 @@ namespace Gameplay.Managers
             Init();
         }
 
-        public void Init()
+        private void Init()
         {
             if (m_Initialized)
                 return;
@@ -36,74 +35,67 @@ namespace Gameplay.Managers
             m_Initialized = true;
             IConfigProvider configProvider = Services.Get<IConfigProvider>();
 
-            if (configProvider.TryGet<CharactersConfig>("CharactersConfig", out CharactersConfig charactersConfig))
-            {
-                m_CharactersConfig = charactersConfig;
-            }
-
             IObjectPooler pooler = Services.Get<IObjectPooler>();
             pooler.Init();
             m_ProjectileFactory = new ProjectileFactory(pooler, configProvider);
+            m_CharactersFactory = new CharactersFactory(pooler, configProvider, m_ProjectileFactory);
         }
 
-        public void Clear()
+        public void RealiseAll()
         {
             m_ProjectileFactory.RealiseAll();
+            m_CharactersFactory.RealiseAll();
         }
 
         public SeparatePlayerController SpawnPlayer(RaceType type)
         {
-            var view = CreateNewCharacter(type);
+            SeparatePlayerController player;
+            var view = m_CharactersFactory.Spawn(type);
+            ICharacterController character = view.CharacterController;
 
+            if (character == null || !(character is SeparatePlayerController))
+            {
+                player = new SeparatePlayerController();
+            }
+            else
+            {
+                player = (SeparatePlayerController)view.CharacterController;
+            }
+
+            player.SetData(view);
             view.SetTeam(TeamId.Blue, true);
-            SeparatePlayerController player = new SeparatePlayerController(view);
-            view.SetController(player);
+            view.Activate(player);
+            Shuffle(view.transform, true);
             return player;
-        }
-
-        public void Shuffle(Transform objTransform, bool isPlayer)
-        {
-            objTransform.position = GetRandomPositionForNew(true);
         }
 
         public SeparateBotController SpawnBot(RaceType type, bool isEnemy)
         {
-            var view = CreateNewCharacter(type);
-            view.SetTeam(isEnemy ? TeamId.Red : TeamId.Blue, false);
-            ITargetDetector detector = new DirectionalTargetDetector(view.transform, view);
-            view.transform.position = GetRandomPositionForNew(false);
+            SeparateBotController bot;
+            var view = m_CharactersFactory.Spawn(type);
+            
+            ICharacterController character = view.CharacterController;
 
-            SeparateBotController bot = new SeparateBotController(view, detector);
-            view.SetController(bot);
+            if (character == null || !(character is SeparateBotController))
+            {
+                bot = new SeparateBotController();
+            }
+            else
+            {
+                bot = (SeparateBotController)view.CharacterController;
+            }
+            
+            Shuffle(view.transform, false);
+            ITargetDetector detector = new DirectionalTargetDetector(view.transform, view);
+            bot.SetData(view, detector);
+            view.SetTeam(isEnemy ? TeamId.Red : TeamId.Blue, false);
+            view.Activate(bot);
             return bot;
         }
 
-        private CharacterView CreateNewCharacter(RaceType raceType)
+        public void Shuffle(Transform objTransform, bool isPlayer)
         {
-            switch (raceType)
-            {
-                case RaceType.Tank:
-                    return CreateNewTank();
-                default: throw new InvalidOperationException();
-            }
-        }
-
-        private CharacterView CreateNewTank()
-        {
-            CharacterConfigModel characterConfigModel = m_CharactersConfig.GetCharacterModel(RaceType.Tank);
-            HealthComponent healthComponent = new HealthComponent(characterConfigModel.MaxHealth);
-
-            AttackComponent attackComponent =
-                new AttackComponent(characterConfigModel.FireRate, characterConfigModel.Damage);
-
-            MovementStats movementStats = new MovementStats(characterConfigModel.Speed);
-
-            CharacterModel characterModel = new CharacterModel(TeamId.Neutral, RaceType.Tank, healthComponent,
-                attackComponent, movementStats, characterConfigModel.Damage);
-
-            CharacterView newUnit = Instantiate(characterConfigModel.CharacterPrefab);
-            newUnit.Init(characterModel, m_ProjectileFactory);
-            return newUnit;
+            objTransform.position = GetRandomPositionForNew(isPlayer);
         }
 
         private Vector2 GetRandomPositionForNew(bool isPlayer)
@@ -111,7 +103,7 @@ namespace Gameplay.Managers
             Vector2 spawnPos = m_Field.GetRandomPosition();
             int locker = 30;
 
-            while (!IsSpawnPossible(spawnPos, !isPlayer))
+            while (!IsSpawnInThisPossible(spawnPos, !isPlayer))
             {
                 if (--locker == 0)
                 {
@@ -125,7 +117,7 @@ namespace Gameplay.Managers
             return spawnPos;
         }
 
-        private bool IsSpawnPossible(Vector2 placeToSpawn, bool playerCheck)
+        private bool IsSpawnInThisPossible(Vector2 placeToSpawn, bool playerCheck)
         {
             const int minAllowableDistance = 10;
             float distance;

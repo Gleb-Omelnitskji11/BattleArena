@@ -44,7 +44,7 @@ namespace Gameplay.Managers
         {
             ServiceLocator.Instance?.Unregister<LevelProgressChecker>();
 
-            m_UnitSpawner.Clear();
+            m_UnitSpawner.RealiseAll();
             Player.CharacterView.OnDie -= GameOver;
         }
 
@@ -69,8 +69,8 @@ namespace Gameplay.Managers
 
         private void SpawnPlayer(RaceType playerRace)
         {
-            if(Player == null) Player = m_UnitSpawner.SpawnPlayer(playerRace);
-                
+            if (Player == null) Player = m_UnitSpawner.SpawnPlayer(playerRace);
+
             else if (Player.CharacterView.CharacterModel.Race != playerRace)
             {
                 Destroy(Player.CharacterView);
@@ -138,7 +138,7 @@ namespace Gameplay.Managers
 
         private void ClearLevel()
         {
-            m_UnitSpawner.Clear();
+            m_UnitSpawner.RealiseAll();
 
             for (int i = 0; i < AllBots.Count; i++)
             {

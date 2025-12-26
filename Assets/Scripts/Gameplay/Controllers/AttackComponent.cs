@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Gameplay.Controllers
 {
-    public class AttackComponent
+    public class AttackComponent : IComponent
     {
         private float FireRate { get; }
         public int Damage { get; }
@@ -22,5 +22,10 @@ namespace Gameplay.Controllers
 
         public void RegisterAttack(float time)
             => m_LastAttackTime = time;
+
+        public void ResetData()
+        {
+            m_LastAttackTime = 0f;
+        }
     }
 }

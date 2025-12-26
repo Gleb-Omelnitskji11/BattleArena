@@ -75,5 +75,10 @@ namespace Gameplay.Controllers
             m_CanMove = false;
             MoveDirection = Vector2.zero;
         }
+
+        public void ResetData()
+        {
+            Stop();
+        }
     }
 }

@@ -2,7 +2,7 @@ using Gameplay.Controllers;
 
 namespace Gameplay.Models
 {
-    public class CharacterModel
+    public class CharacterModel : IComponent
     {
         public TeamId TeamId { get; private set; }
         public RaceType Race { get; }
@@ -26,6 +26,12 @@ namespace Gameplay.Models
         public void ChangeTeam(TeamId newTeam)
         {
             TeamId = newTeam;
+        }
+
+        public void ResetData()
+        {
+            Health.ResetData();
+            AttackComponent.ResetData();
         }
     }
 }

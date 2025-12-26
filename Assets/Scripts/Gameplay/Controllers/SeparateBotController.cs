@@ -10,20 +10,22 @@ namespace Gameplay.Controllers
 {
     public class SeparateBotController : ICharacterController
     {
-        private readonly CharacterView m_CharacterView;
-        private readonly ITargetDetector m_Detector;
+        private CharacterView m_CharacterView;
+        private ITargetDetector m_Detector;
 
         private CharacterView m_CurrentTarget;
-        private Vector2 m_CurrentDirection;
         public CharacterView CharacterView => m_CharacterView;
 
         private Action m_UpdateAction;
         private bool m_HasTarget;
-        private const int MaxTimeInOneDirection = 10000;
         private CancellationTokenSource m_EscapeCts;
+        private const int MaxTimeInOneDirection = 10000;
         private const int MaxEscapeAttempts = 3;
+        
+        
+        private Vector2 m_CurrentDirection;
 
-        public SeparateBotController(CharacterView view, ITargetDetector detector)
+        public void SetData(CharacterView view, ITargetDetector detector)
         {
             m_CharacterView = view;
             m_Detector = detector;
@@ -38,6 +40,15 @@ namespace Gameplay.Controllers
 
             m_CharacterView.OnCollision -= OnCollision;
             m_CharacterView.OnDie -= OnDie;
+        }
+
+        public void ResetData()
+        {
+            m_UpdateAction = () => { };
+            m_CurrentDirection = Vector2.zero;
+            m_EscapeCts = null;
+            m_HasTarget = false;
+            m_CharacterView.Reset();
         }
 
         public void Tick()
