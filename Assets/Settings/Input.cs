@@ -506,7 +506,7 @@ public partial class @Input: IInputActionCollection2, IDisposable
     /// <summary>
     /// Provides a new <see cref="KeysGameplayActions" /> instance referencing this action map.
     /// </summary>
-    public KeysGameplayActions @KeysGameplay => new KeysGameplayActions(this);
+    public KeysGameplayActions PCInput => new KeysGameplayActions(this);
 
     // Game
     private readonly InputActionMap m_Game;

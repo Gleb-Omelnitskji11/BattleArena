@@ -6,8 +6,15 @@ namespace Game.Player
     public interface IPlayerInputController : IDisposable
     {
         Vector2 MoveInput { get;}
-        bool ShootPressed { get;}
-
         void Init();
+        
+        void Enable();
+        void Disable();
+        bool IsEnabled { get; }
+
+        
+        event Action OnFire;
+        event Action<Vector2, bool> OnNewDirection;
+        event Action OnMoveCancel;
     }
 }

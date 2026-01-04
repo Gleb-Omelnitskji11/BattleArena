@@ -4,14 +4,15 @@ using TowerDefence.Core;
 
 namespace Systems.InputService
 {
-    public class InputManager : IService, IInputManager
+    public class InputManager : IInputManager
     {
         private IPlayerInputController m_CurrentPlayerInputController;
         private MovementSystemType m_CurrentMovementSystemType;
 
         public void Init()
         {
-            m_CurrentMovementSystemType = MovementSystemType.Mobile; //Todo
+            //m_CurrentMovementSystemType = MovementSystemType.Mobile;
+            m_CurrentMovementSystemType = MovementSystemType.Keyboard;
         }
 
         public IPlayerInputController GetCurrentPlayerInputController()
@@ -25,8 +26,8 @@ namespace Systems.InputService
 
             switch (type)
             {
-                case MovementSystemType.KeyboardLinear:
-                    playerInputController = new InputLinearControl();
+                case MovementSystemType.Keyboard:
+                    playerInputController = new InputKeyboardMouseControl();
                     break;
                 case MovementSystemType.Mobile:
                     playerInputController = new InputMobileController();
@@ -42,7 +43,7 @@ namespace Systems.InputService
 
     public enum MovementSystemType
     {
-        KeyboardLinear,
+        Keyboard,
         Mobile
     }
 }

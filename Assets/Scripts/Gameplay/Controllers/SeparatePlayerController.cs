@@ -1,7 +1,7 @@
-using System;
+using Game.Player;
 using Gameplay.Views;
+using Systems.InputService;
 using TowerDefence.Core;
-using TowerDefence.Game;
 using TowerDefence.Systems;
 using UnityEngine;
 
@@ -10,25 +10,23 @@ namespace Gameplay.Controllers
     public class SeparatePlayerController : ICharacterController
     {
         private CharacterView m_CharacterView;
-        private IInputService m_PlayerInputController;
-        private Camera m_Camera;
+        private IPlayerInputController m_PlayerInputController;
 
         public CharacterView CharacterView => m_CharacterView;
 
         public void SetData(CharacterView characterView)
         {
             m_CharacterView = characterView;
-            m_Camera = Camera.main;
 
             SetSystems();
         }
 
         ~SeparatePlayerController()
         {
-            m_PlayerInputController.OnHold -= OnHold;
-            m_PlayerInputController.OnTap -= OnTap;
-            m_PlayerInputController.OnTouchMoved -= OnTouchMoved;
-            m_PlayerInputController.OnCancel -= OnTouchCancelled;
+            m_PlayerInputController.OnNewDirection -= OnHold;
+            m_PlayerInputController.OnFire -= OnTap;
+            m_PlayerInputController.OnNewDirection -= OnTouchMoved;
+            m_PlayerInputController.OnMoveCancel -= OnTouchCancelled;
 
             m_CharacterView.OnCollision -= OnCollision;
         }
@@ -40,15 +38,15 @@ namespace Gameplay.Controllers
 
         private void SetSystems()
         {
-            if (Services.TryGet<IInputService>(out var inputService))
+            if (Services.TryGet<IInputManager>(out var inputManager))
             {
-                m_PlayerInputController = inputService;
+                m_PlayerInputController = inputManager.GetCurrentPlayerInputController();
             }
 
-            m_PlayerInputController.OnHold += OnHold;
-            m_PlayerInputController.OnTap += OnTap;
-            m_PlayerInputController.OnTouchMoved += OnTouchMoved;
-            m_PlayerInputController.OnCancel += OnTouchCancelled;
+            m_PlayerInputController.OnNewDirection += OnHold;
+            m_PlayerInputController.OnFire += OnTap;
+            m_PlayerInputController.OnNewDirection += OnTouchMoved;
+            m_PlayerInputController.OnMoveCancel += OnTouchCancelled;
 
             m_CharacterView.OnCollision += OnCollision;
         }
@@ -58,16 +56,14 @@ namespace Gameplay.Controllers
         {
         }
 
-        private void OnHold(Vector2 screenPos)
+        private void OnHold(Vector2 pos, bool withMoving)
         {
-            Vector2 worldPos = GetDirection(screenPos);
-            m_CharacterView.UpdateDirection(worldPos);
+            m_CharacterView.UpdateDirection(pos, withMoving);
         }
 
-        private void OnTouchMoved(Vector2 screenPos)
+        private void OnTouchMoved(Vector2 pos, bool withMoving)
         {
-            Vector2 worldPos = GetDirection(screenPos);
-            m_CharacterView.UpdateDirection(worldPos);
+            m_CharacterView.UpdateDirection(pos, withMoving);
         }
 
         private void OnTouchCancelled()
@@ -75,22 +71,9 @@ namespace Gameplay.Controllers
             m_CharacterView.StopMove();
         }
 
-        private void OnTap(Vector2 screenPos)
+        private void OnTap()
         {
-            Vector2 worldPos = GetDirection(screenPos);
-            m_CharacterView.UpdateDirection(worldPos, false);
             m_CharacterView.Attack();
-        }
-
-        private Vector2 GetDirection(Vector2 screenPos)
-        {
-            Vector3 worldPos = m_Camera.ScreenToWorldPoint(
-                new Vector3(screenPos.x, screenPos.y, Mathf.Abs(m_Camera.transform.position.z)));
-
-            Vector2 dir = new(worldPos.x - m_CharacterView.transform.position.x,
-                worldPos.y - m_CharacterView.transform.position.y);
-
-            return dir;
         }
 
         private void OnCollision(GameObject obj)
