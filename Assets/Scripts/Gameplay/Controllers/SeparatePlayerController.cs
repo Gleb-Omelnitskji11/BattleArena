@@ -41,6 +41,11 @@ namespace Gameplay.Controllers
             if (Services.TryGet<IInputManager>(out var inputManager))
             {
                 m_PlayerInputController = inputManager.GetCurrentPlayerInputController();
+
+                if (m_PlayerInputController is InputMobileController controller)
+                {
+                    controller.SetPlayerObject(CharacterView.transform);
+                }
             }
 
             m_PlayerInputController.OnNewDirection += OnHold;

@@ -1,6 +1,5 @@
 using System;
 using Game.Player;
-using TowerDefence.Core;
 
 namespace Systems.InputService
 {

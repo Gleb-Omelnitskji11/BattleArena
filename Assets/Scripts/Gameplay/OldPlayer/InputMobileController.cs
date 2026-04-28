@@ -18,16 +18,21 @@ namespace Game.Player
         public event Action<Vector2, bool> OnNewDirection;
         public event Action OnMoveCancel;
 
+        public void SetPlayerObject(Transform playerTransform)
+        {
+            m_OriginTransform = playerTransform;
+        }
+
         public void Init()
         {
             m_CustomInput = new Input();
             m_Camera = Camera.main;
-            m_CustomInput.Game.Tap.performed += HandleTap;
-            m_CustomInput.Game.Hold.performed += HandleHold;
-            m_CustomInput.Game.TouchDelta.performed += HandleTouchMoved;
-            m_CustomInput.Game.Press.canceled += HandlePressCancel;
+            m_CustomInput.TouchGameplay.Tap.performed += HandleTap;
+            m_CustomInput.TouchGameplay.Hold.performed += HandleHold;
+            m_CustomInput.TouchGameplay.TouchDelta.performed += HandleTouchMoved;
+            m_CustomInput.TouchGameplay.Press.canceled += HandlePressCancel;
 
-            m_CustomInput.PCInput.Enable();
+            m_CustomInput.TouchGameplay.Enable();
         }
 
         public void Dispose()
@@ -39,11 +44,11 @@ namespace Game.Player
                 return;
             }
 
-            m_CustomInput.Game.Tap.performed -= HandleTap;
-            m_CustomInput.Game.Hold.performed -= HandleHold;
-            m_CustomInput.Game.TouchDelta.performed -= HandleTouchMoved;
-            m_CustomInput.Game.Tap.canceled -= HandlePressCancel;
-            m_CustomInput.Game.Press.canceled -= HandlePressCancel;
+            m_CustomInput.TouchGameplay.Tap.performed -= HandleTap;
+            m_CustomInput.TouchGameplay.Hold.performed -= HandleHold;
+            m_CustomInput.TouchGameplay.TouchDelta.performed -= HandleTouchMoved;
+            m_CustomInput.TouchGameplay.Tap.canceled -= HandlePressCancel;
+            m_CustomInput.TouchGameplay.Press.canceled -= HandlePressCancel;
 
             //CustomInput.PCInput.Disable();
             m_CustomInput.Dispose();
@@ -56,7 +61,7 @@ namespace Game.Player
                 return;
             }
 
-            m_CustomInput?.Game.Enable();
+            m_CustomInput?.TouchGameplay.Enable();
             IsEnabled = true;
         }
 
@@ -67,7 +72,7 @@ namespace Game.Player
                 return;
             }
 
-            m_CustomInput?.Game.Disable();
+            m_CustomInput?.TouchGameplay.Disable();
             IsEnabled = false;
         }
 
@@ -80,7 +85,7 @@ namespace Game.Player
 
             Vector2 screenPos = GetTouchPosition();
             Vector2 worldPos = GetDirection(screenPos);
-            OnNewDirection?.Invoke(worldPos, false);
+            OnNewDirection?.Invoke(worldPos, true);
             OnFire?.Invoke();
         }
 
@@ -138,7 +143,7 @@ namespace Game.Player
 
         private Vector2 GetTouchPosition()
         {
-            return m_CustomInput?.Game.TouchPosition.ReadValue<Vector2>() ?? Vector2.zero;
+            return m_CustomInput?.TouchGameplay.TouchPosition.ReadValue<Vector2>() ?? Vector2.zero;
         }
 
         private Vector2 GetDirection(Vector2 screenPos)

@@ -644,7 +644,7 @@ GameObject:
   - component: {fileID: -6955522815953791968}
   - component: {fileID: 3861474658496531092}
   - component: {fileID: 410007338837025828}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Bot
   m_TagString: Enemy
   m_Icon: {fileID: 0}
