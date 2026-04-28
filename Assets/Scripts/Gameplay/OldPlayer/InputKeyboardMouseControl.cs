@@ -19,12 +19,12 @@ namespace Game.Player
         {
             m_CustomInput = new Input();
 
-            m_CustomInput.PCInput.Enable();
+            m_CustomInput.KeysGameplay.Enable();
 
-            m_CustomInput.PCInput.Move.performed += GetMoveKey;
-            m_CustomInput.PCInput.Move.canceled += GetMoveKey;
-            m_CustomInput.PCInput.Shoot.performed += OnShootClick;
-            m_CustomInput.PCInput.Shoot.canceled += OnShootClick;
+            m_CustomInput.KeysGameplay.Move.performed += GetMoveKey;
+            m_CustomInput.KeysGameplay.Move.canceled += GetMoveKey;
+            m_CustomInput.KeysGameplay.Shoot.performed += OnShootClick;
+            m_CustomInput.KeysGameplay.Shoot.canceled += OnShootClick;
         }
 
         public void Dispose()
@@ -36,12 +36,12 @@ namespace Game.Player
                 return;
             }
 
-            m_CustomInput.PCInput.Move.performed -= GetMoveKey;
-            m_CustomInput.PCInput.Move.canceled -= GetMoveKey;
-            m_CustomInput.PCInput.Shoot.performed -= OnShootClick;
-            m_CustomInput.PCInput.Shoot.canceled -= OnShootClick;
+            m_CustomInput.KeysGameplay.Move.performed -= GetMoveKey;
+            m_CustomInput.KeysGameplay.Move.canceled -= GetMoveKey;
+            m_CustomInput.KeysGameplay.Shoot.performed -= OnShootClick;
+            m_CustomInput.KeysGameplay.Shoot.canceled -= OnShootClick;
 
-            //CustomInput.PCInput.Disable();
+            //CustomInput.KeysGameplay.Disable();
             m_CustomInput.Dispose();
         }
 
@@ -52,7 +52,7 @@ namespace Game.Player
                 return;
             }
 
-            m_CustomInput?.Game.Enable();
+            m_CustomInput?.KeysGameplay.Enable();
             IsEnabled = true;
         }
 
@@ -63,7 +63,7 @@ namespace Game.Player
                 return;
             }
 
-            m_CustomInput?.Game.Disable();
+            m_CustomInput?.KeysGameplay.Disable();
             IsEnabled = false;
         }
 
@@ -75,7 +75,6 @@ namespace Game.Player
 
         private void OnShootClick(InputAction.CallbackContext ctx)
         {
-            MoveInput = ctx.ReadValue<Vector2>();
             OnNewDirection?.Invoke(MoveInput, false);
             OnFire?.Invoke();
         }

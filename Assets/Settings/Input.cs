@@ -93,15 +93,6 @@ public partial class @Input: IInputActionCollection2, IDisposable
             ""id"": ""3bac79eb-b882-4dfa-bd45-4f02ffd01b46"",
             ""actions"": [
                 {
-                    ""name"": ""Shoot"",
-                    ""type"": ""Button"",
-                    ""id"": ""d163b0bd-1fa7-4362-8c52-61a9046acb5c"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
                     ""name"": ""Move"",
                     ""type"": ""Value"",
                     ""id"": ""a542ff04-c35f-474b-a359-b89b8185f881"",
@@ -109,20 +100,18 @@ public partial class @Input: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Shoot"",
+                    ""type"": ""Button"",
+                    ""id"": ""59b270bf-3783-424d-aca0-d3e6bc40f147"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""a2608e79-90b2-4e42-ba16-6fd91eeeecb0"",
-                    ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Shoot"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
                 {
                     ""name"": ""2D Vector"",
                     ""id"": ""cbdeb87a-7fc0-4a77-a269-18d502102693"",
@@ -177,11 +166,22 @@ public partial class @Input: IInputActionCollection2, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""84e16f22-f669-4bd6-9278-3583e611b2e7"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
         {
-            ""name"": ""Game"",
+            ""name"": ""TouchGameplay"",
             ""id"": ""be256235-8105-409a-931d-714224eeffc3"",
             ""actions"": [
                 {
@@ -313,22 +313,22 @@ public partial class @Input: IInputActionCollection2, IDisposable
 }");
         // KeysGameplay
         m_KeysGameplay = asset.FindActionMap("KeysGameplay", throwIfNotFound: true);
-        m_KeysGameplay_Shoot = m_KeysGameplay.FindAction("Shoot", throwIfNotFound: true);
         m_KeysGameplay_Move = m_KeysGameplay.FindAction("Move", throwIfNotFound: true);
-        // Game
-        m_Game = asset.FindActionMap("Game", throwIfNotFound: true);
-        m_Game_TouchPosition = m_Game.FindAction("TouchPosition", throwIfNotFound: true);
-        m_Game_TouchDelta = m_Game.FindAction("TouchDelta", throwIfNotFound: true);
-        m_Game_TouchPhase = m_Game.FindAction("TouchPhase", throwIfNotFound: true);
-        m_Game_Tap = m_Game.FindAction("Tap", throwIfNotFound: true);
-        m_Game_Hold = m_Game.FindAction("Hold", throwIfNotFound: true);
-        m_Game_Press = m_Game.FindAction("Press", throwIfNotFound: true);
+        m_KeysGameplay_Shoot = m_KeysGameplay.FindAction("Shoot", throwIfNotFound: true);
+        // TouchGameplay
+        m_TouchGameplay = asset.FindActionMap("TouchGameplay", throwIfNotFound: true);
+        m_TouchGameplay_TouchPosition = m_TouchGameplay.FindAction("TouchPosition", throwIfNotFound: true);
+        m_TouchGameplay_TouchDelta = m_TouchGameplay.FindAction("TouchDelta", throwIfNotFound: true);
+        m_TouchGameplay_TouchPhase = m_TouchGameplay.FindAction("TouchPhase", throwIfNotFound: true);
+        m_TouchGameplay_Tap = m_TouchGameplay.FindAction("Tap", throwIfNotFound: true);
+        m_TouchGameplay_Hold = m_TouchGameplay.FindAction("Hold", throwIfNotFound: true);
+        m_TouchGameplay_Press = m_TouchGameplay.FindAction("Press", throwIfNotFound: true);
     }
 
     ~@Input()
     {
         UnityEngine.Debug.Assert(!m_KeysGameplay.enabled, "This will cause a leak and performance issues, Input.KeysGameplay.Disable() has not been called.");
-        UnityEngine.Debug.Assert(!m_Game.enabled, "This will cause a leak and performance issues, Input.Game.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_TouchGameplay.enabled, "This will cause a leak and performance issues, Input.TouchGameplay.Disable() has not been called.");
     }
 
     /// <summary>
@@ -404,8 +404,8 @@ public partial class @Input: IInputActionCollection2, IDisposable
     // KeysGameplay
     private readonly InputActionMap m_KeysGameplay;
     private List<IKeysGameplayActions> m_KeysGameplayActionsCallbackInterfaces = new List<IKeysGameplayActions>();
-    private readonly InputAction m_KeysGameplay_Shoot;
     private readonly InputAction m_KeysGameplay_Move;
+    private readonly InputAction m_KeysGameplay_Shoot;
     /// <summary>
     /// Provides access to input actions defined in input action map "KeysGameplay".
     /// </summary>
@@ -418,13 +418,13 @@ public partial class @Input: IInputActionCollection2, IDisposable
         /// </summary>
         public KeysGameplayActions(@Input wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "KeysGameplay/Shoot".
-        /// </summary>
-        public InputAction @Shoot => m_Wrapper.m_KeysGameplay_Shoot;
-        /// <summary>
         /// Provides access to the underlying input action "KeysGameplay/Move".
         /// </summary>
         public InputAction @Move => m_Wrapper.m_KeysGameplay_Move;
+        /// <summary>
+        /// Provides access to the underlying input action "KeysGameplay/Shoot".
+        /// </summary>
+        public InputAction @Shoot => m_Wrapper.m_KeysGameplay_Shoot;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -451,12 +451,12 @@ public partial class @Input: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_KeysGameplayActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_KeysGameplayActionsCallbackInterfaces.Add(instance);
-            @Shoot.started += instance.OnShoot;
-            @Shoot.performed += instance.OnShoot;
-            @Shoot.canceled += instance.OnShoot;
             @Move.started += instance.OnMove;
             @Move.performed += instance.OnMove;
             @Move.canceled += instance.OnMove;
+            @Shoot.started += instance.OnShoot;
+            @Shoot.performed += instance.OnShoot;
+            @Shoot.canceled += instance.OnShoot;
         }
 
         /// <summary>
@@ -468,12 +468,12 @@ public partial class @Input: IInputActionCollection2, IDisposable
         /// <seealso cref="KeysGameplayActions" />
         private void UnregisterCallbacks(IKeysGameplayActions instance)
         {
-            @Shoot.started -= instance.OnShoot;
-            @Shoot.performed -= instance.OnShoot;
-            @Shoot.canceled -= instance.OnShoot;
             @Move.started -= instance.OnMove;
             @Move.performed -= instance.OnMove;
             @Move.canceled -= instance.OnMove;
+            @Shoot.started -= instance.OnShoot;
+            @Shoot.performed -= instance.OnShoot;
+            @Shoot.canceled -= instance.OnShoot;
         }
 
         /// <summary>
@@ -506,56 +506,56 @@ public partial class @Input: IInputActionCollection2, IDisposable
     /// <summary>
     /// Provides a new <see cref="KeysGameplayActions" /> instance referencing this action map.
     /// </summary>
-    public KeysGameplayActions PCInput => new KeysGameplayActions(this);
+    public KeysGameplayActions @KeysGameplay => new KeysGameplayActions(this);
 
-    // Game
-    private readonly InputActionMap m_Game;
-    private List<IGameActions> m_GameActionsCallbackInterfaces = new List<IGameActions>();
-    private readonly InputAction m_Game_TouchPosition;
-    private readonly InputAction m_Game_TouchDelta;
-    private readonly InputAction m_Game_TouchPhase;
-    private readonly InputAction m_Game_Tap;
-    private readonly InputAction m_Game_Hold;
-    private readonly InputAction m_Game_Press;
+    // TouchGameplay
+    private readonly InputActionMap m_TouchGameplay;
+    private List<ITouchGameplayActions> m_TouchGameplayActionsCallbackInterfaces = new List<ITouchGameplayActions>();
+    private readonly InputAction m_TouchGameplay_TouchPosition;
+    private readonly InputAction m_TouchGameplay_TouchDelta;
+    private readonly InputAction m_TouchGameplay_TouchPhase;
+    private readonly InputAction m_TouchGameplay_Tap;
+    private readonly InputAction m_TouchGameplay_Hold;
+    private readonly InputAction m_TouchGameplay_Press;
     /// <summary>
-    /// Provides access to input actions defined in input action map "Game".
+    /// Provides access to input actions defined in input action map "TouchGameplay".
     /// </summary>
-    public struct GameActions
+    public struct TouchGameplayActions
     {
         private @Input m_Wrapper;
 
         /// <summary>
         /// Construct a new instance of the input action map wrapper class.
         /// </summary>
-        public GameActions(@Input wrapper) { m_Wrapper = wrapper; }
+        public TouchGameplayActions(@Input wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "Game/TouchPosition".
+        /// Provides access to the underlying input action "TouchGameplay/TouchPosition".
         /// </summary>
-        public InputAction @TouchPosition => m_Wrapper.m_Game_TouchPosition;
+        public InputAction @TouchPosition => m_Wrapper.m_TouchGameplay_TouchPosition;
         /// <summary>
-        /// Provides access to the underlying input action "Game/TouchDelta".
+        /// Provides access to the underlying input action "TouchGameplay/TouchDelta".
         /// </summary>
-        public InputAction @TouchDelta => m_Wrapper.m_Game_TouchDelta;
+        public InputAction @TouchDelta => m_Wrapper.m_TouchGameplay_TouchDelta;
         /// <summary>
-        /// Provides access to the underlying input action "Game/TouchPhase".
+        /// Provides access to the underlying input action "TouchGameplay/TouchPhase".
         /// </summary>
-        public InputAction @TouchPhase => m_Wrapper.m_Game_TouchPhase;
+        public InputAction @TouchPhase => m_Wrapper.m_TouchGameplay_TouchPhase;
         /// <summary>
-        /// Provides access to the underlying input action "Game/Tap".
+        /// Provides access to the underlying input action "TouchGameplay/Tap".
         /// </summary>
-        public InputAction @Tap => m_Wrapper.m_Game_Tap;
+        public InputAction @Tap => m_Wrapper.m_TouchGameplay_Tap;
         /// <summary>
-        /// Provides access to the underlying input action "Game/Hold".
+        /// Provides access to the underlying input action "TouchGameplay/Hold".
         /// </summary>
-        public InputAction @Hold => m_Wrapper.m_Game_Hold;
+        public InputAction @Hold => m_Wrapper.m_TouchGameplay_Hold;
         /// <summary>
-        /// Provides access to the underlying input action "Game/Press".
+        /// Provides access to the underlying input action "TouchGameplay/Press".
         /// </summary>
-        public InputAction @Press => m_Wrapper.m_Game_Press;
+        public InputAction @Press => m_Wrapper.m_TouchGameplay_Press;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
-        public InputActionMap Get() { return m_Wrapper.m_Game; }
+        public InputActionMap Get() { return m_Wrapper.m_TouchGameplay; }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
         public void Enable() { Get().Enable(); }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
@@ -563,9 +563,9 @@ public partial class @Input: IInputActionCollection2, IDisposable
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
         public bool enabled => Get().enabled;
         /// <summary>
-        /// Implicitly converts an <see ref="GameActions" /> to an <see ref="InputActionMap" /> instance.
+        /// Implicitly converts an <see ref="TouchGameplayActions" /> to an <see ref="InputActionMap" /> instance.
         /// </summary>
-        public static implicit operator InputActionMap(GameActions set) { return set.Get(); }
+        public static implicit operator InputActionMap(TouchGameplayActions set) { return set.Get(); }
         /// <summary>
         /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
         /// </summary>
@@ -573,11 +573,11 @@ public partial class @Input: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
         /// </remarks>
-        /// <seealso cref="GameActions" />
-        public void AddCallbacks(IGameActions instance)
+        /// <seealso cref="TouchGameplayActions" />
+        public void AddCallbacks(ITouchGameplayActions instance)
         {
-            if (instance == null || m_Wrapper.m_GameActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_GameActionsCallbackInterfaces.Add(instance);
+            if (instance == null || m_Wrapper.m_TouchGameplayActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_TouchGameplayActionsCallbackInterfaces.Add(instance);
             @TouchPosition.started += instance.OnTouchPosition;
             @TouchPosition.performed += instance.OnTouchPosition;
             @TouchPosition.canceled += instance.OnTouchPosition;
@@ -604,8 +604,8 @@ public partial class @Input: IInputActionCollection2, IDisposable
         /// <remarks>
         /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
         /// </remarks>
-        /// <seealso cref="GameActions" />
-        private void UnregisterCallbacks(IGameActions instance)
+        /// <seealso cref="TouchGameplayActions" />
+        private void UnregisterCallbacks(ITouchGameplayActions instance)
         {
             @TouchPosition.started -= instance.OnTouchPosition;
             @TouchPosition.performed -= instance.OnTouchPosition;
@@ -628,12 +628,12 @@ public partial class @Input: IInputActionCollection2, IDisposable
         }
 
         /// <summary>
-        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="GameActions.UnregisterCallbacks(IGameActions)" />.
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="TouchGameplayActions.UnregisterCallbacks(ITouchGameplayActions)" />.
         /// </summary>
-        /// <seealso cref="GameActions.UnregisterCallbacks(IGameActions)" />
-        public void RemoveCallbacks(IGameActions instance)
+        /// <seealso cref="TouchGameplayActions.UnregisterCallbacks(ITouchGameplayActions)" />
+        public void RemoveCallbacks(ITouchGameplayActions instance)
         {
-            if (m_Wrapper.m_GameActionsCallbackInterfaces.Remove(instance))
+            if (m_Wrapper.m_TouchGameplayActionsCallbackInterfaces.Remove(instance))
                 UnregisterCallbacks(instance);
         }
 
@@ -643,21 +643,21 @@ public partial class @Input: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
         /// </remarks>
-        /// <seealso cref="GameActions.AddCallbacks(IGameActions)" />
-        /// <seealso cref="GameActions.RemoveCallbacks(IGameActions)" />
-        /// <seealso cref="GameActions.UnregisterCallbacks(IGameActions)" />
-        public void SetCallbacks(IGameActions instance)
+        /// <seealso cref="TouchGameplayActions.AddCallbacks(ITouchGameplayActions)" />
+        /// <seealso cref="TouchGameplayActions.RemoveCallbacks(ITouchGameplayActions)" />
+        /// <seealso cref="TouchGameplayActions.UnregisterCallbacks(ITouchGameplayActions)" />
+        public void SetCallbacks(ITouchGameplayActions instance)
         {
-            foreach (var item in m_Wrapper.m_GameActionsCallbackInterfaces)
+            foreach (var item in m_Wrapper.m_TouchGameplayActionsCallbackInterfaces)
                 UnregisterCallbacks(item);
-            m_Wrapper.m_GameActionsCallbackInterfaces.Clear();
+            m_Wrapper.m_TouchGameplayActionsCallbackInterfaces.Clear();
             AddCallbacks(instance);
         }
     }
     /// <summary>
-    /// Provides a new <see cref="GameActions" /> instance referencing this action map.
+    /// Provides a new <see cref="TouchGameplayActions" /> instance referencing this action map.
     /// </summary>
-    public GameActions @Game => new GameActions(this);
+    public TouchGameplayActions @TouchGameplay => new TouchGameplayActions(this);
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "KeysGameplay" which allows adding and removing callbacks.
     /// </summary>
@@ -666,26 +666,26 @@ public partial class @Input: IInputActionCollection2, IDisposable
     public interface IKeysGameplayActions
     {
         /// <summary>
-        /// Method invoked when associated input action "Shoot" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnShoot(InputAction.CallbackContext context);
-        /// <summary>
         /// Method invoked when associated input action "Move" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMove(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Shoot" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnShoot(InputAction.CallbackContext context);
     }
     /// <summary>
-    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Game" which allows adding and removing callbacks.
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "TouchGameplay" which allows adding and removing callbacks.
     /// </summary>
-    /// <seealso cref="GameActions.AddCallbacks(IGameActions)" />
-    /// <seealso cref="GameActions.RemoveCallbacks(IGameActions)" />
-    public interface IGameActions
+    /// <seealso cref="TouchGameplayActions.AddCallbacks(ITouchGameplayActions)" />
+    /// <seealso cref="TouchGameplayActions.RemoveCallbacks(ITouchGameplayActions)" />
+    public interface ITouchGameplayActions
     {
         /// <summary>
         /// Method invoked when associated input action "TouchPosition" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.

@@ -7,15 +7,6 @@
             "id": "3bac79eb-b882-4dfa-bd45-4f02ffd01b46",
             "actions": [
                 {
-                    "name": "Shoot",
-                    "type": "Button",
-                    "id": "d163b0bd-1fa7-4362-8c52-61a9046acb5c",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
                     "name": "Move",
                     "type": "Value",
                     "id": "a542ff04-c35f-474b-a359-b89b8185f881",
@@ -23,20 +14,18 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Shoot",
+                    "type": "Button",
+                    "id": "59b270bf-3783-424d-aca0-d3e6bc40f147",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
-                {
-                    "name": "",
-                    "id": "a2608e79-90b2-4e42-ba16-6fd91eeeecb0",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Shoot",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
                 {
                     "name": "2D Vector",
                     "id": "cbdeb87a-7fc0-4a77-a269-18d502102693",
@@ -91,11 +80,22 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "84e16f22-f669-4bd6-9278-3583e611b2e7",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
         {
-            "name": "Game",
+            "name": "TouchGameplay",
             "id": "be256235-8105-409a-931d-714224eeffc3",
             "actions": [
                 {
